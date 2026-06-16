@@ -1,0 +1,47 @@
+{
+  "identifier": "cloudResource",
+  "title": "Cloud Resource",
+  "icon": "Cloud",
+  "schema": {
+    "properties": {
+      "kind": {
+        "title": "Resource Kind",
+        "type": "string"
+      },
+      "status": {
+        "title": "Status",
+        "type": "string",
+        "enum": ["Provisioning", "Active", "Deprecated"],
+        "enumColors": {
+          "Provisioning": "yellow",
+          "Active": "green",
+          "Deprecated": "lightGray"
+        }
+      },
+      "region": {
+        "title": "Region",
+        "type": "string"
+      },
+      "environment": {
+        "title": "Environment",
+        "type": "string"
+      },
+      "link": {
+        "title": "Console Link",
+        "type": "string",
+        "format": "url"
+      }
+    },
+    "required": []
+  },
+  "mirrorProperties": {},
+  "calculationProperties": {},
+  "relations": {
+    "used_by": {
+      "title": "Used By Service",
+      "target": "service",
+      "required": false,
+      "many": false
+    }
+  }
+}

@@ -1,0 +1,68 @@
+[
+  {
+    "identifier": "payments-service",
+    "title": "Payments Service",
+    "blueprint": "service",
+    "properties": {
+      "tier": "Gold",
+      "language": "Go",
+      "owner_team": "payments-team",
+      "repository_url": "https://github.com/platformcon-carne/payments-service"
+    }
+  },
+  {
+    "identifier": "order-management",
+    "title": "Order Management",
+    "blueprint": "service",
+    "properties": {
+      "tier": "Gold",
+      "language": "Python",
+      "owner_team": "orders-team",
+      "repository_url": "https://github.com/platformcon-carne/order-management"
+    }
+  },
+  {
+    "identifier": "menu-catalog",
+    "title": "Menu Catalog",
+    "blueprint": "service",
+    "properties": {
+      "tier": "Silver",
+      "language": "Node.js",
+      "owner_team": "catalog-team",
+      "repository_url": "https://github.com/platformcon-carne/menu-catalog"
+    }
+  },
+  {
+    "identifier": "delivery-tracking",
+    "title": "Delivery Tracking",
+    "blueprint": "service",
+    "properties": {
+      "tier": "Silver",
+      "language": "Go",
+      "owner_team": "logistics-team",
+      "repository_url": "https://github.com/platformcon-carne/delivery-tracking"
+    }
+  },
+  {
+    "identifier": "user-profiles",
+    "title": "User Profiles",
+    "blueprint": "service",
+    "properties": {
+      "tier": "Bronze",
+      "language": "Python",
+      "owner_team": "platform-team",
+      "repository_url": "https://github.com/platformcon-carne/user-profiles"
+    }
+  },
+  {
+    "identifier": "notification-service",
+    "title": "Notification Service",
+    "blueprint": "service",
+    "properties": {
+      "tier": "Bronze",
+      "language": "Node.js",
+      "owner_team": "platform-team",
+      "repository_url": "https://github.com/platformcon-carne/notification-service"
+    }
+  }
+]

@@ -1,0 +1,37 @@
+{
+  "identifier": "service",
+  "title": "Service",
+  "icon": "Microservice",
+  "schema": {
+    "properties": {
+      "tier": {
+        "title": "Service Tier",
+        "type": "string",
+        "enum": ["Gold", "Silver", "Bronze"],
+        "enumColors": {
+          "Gold": "yellow",
+          "Silver": "lightGray",
+          "Bronze": "orange"
+        }
+      },
+      "language": {
+        "title": "Language",
+        "type": "string",
+        "enum": ["Go", "Python", "Node.js", "Java"]
+      },
+      "owner_team": {
+        "title": "Owner Team",
+        "type": "string"
+      },
+      "repository_url": {
+        "title": "Repository",
+        "type": "string",
+        "format": "url"
+      }
+    },
+    "required": []
+  },
+  "mirrorProperties": {},
+  "calculationProperties": {},
+  "relations": {}
+}
