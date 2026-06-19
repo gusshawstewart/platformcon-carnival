@@ -5,7 +5,7 @@
 The intelligence behind the form. A multi-step workflow that:
 
 1. **Fetches service context** from the catalog
-2. **Human-in-the-loop (INPUT node)** — optional notes, then *Proceed with AI plan* or *Stop run* (stop notifies Slack and ends that branch). Uses Port’s `INPUT` node; `numOfResponders` is **1** per path so you can test solo.
+2. **Human-in-the-loop (INPUT node)** — authorizes **whether Port may run the AI** to draft an implementation plan (not approval of the final change). Optional notes; **Yes — generate draft plan with AI** continues the run, **No — cancel run** stops before AI and can notify Slack. `numOfResponders` is **1** per path for workshop use.
 3. **Branches** on Cloud vs On-Premise
 4. **Calls an AI node** to generate an implementation plan + architecture diagram
 5. **Creates a request entity** in Port with the AI output
@@ -18,16 +18,16 @@ The intelligence behind the form. A multi-step workflow that:
 The AI node uses Claude with:
 - A system prompt scoped to infrastructure architecture
 - A user prompt that includes the service tier, language, environment, and requirements
-- GitHub MCP to search for existing Terraform modules
-- Notion MCP to find relevant runbooks
 - Structured output: `implementation_plan` (markdown) + `architecture` (Mermaid diagram)
+
+No external MCP tools are required for this workshop workflow; the model answers from the request and catalog context only.
 
 ## Conditional Logic
 
 ```
 trigger
   └── fetch_service_context
-        └── human_gate_before_plan (INPUT — early HITL preview)
+        └── human_gate_before_plan (INPUT — authorize AI draft only)
               ├── proceed → condition: Cloud or On-Premise?
               │         ├── Cloud → ai_generate_plan_cloud
               │         └── On-Premise → ai_generate_plan_onprem

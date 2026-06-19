@@ -15,7 +15,7 @@ For workflow structure guidance, you may call Port MCP `load_skill` with `name: 
 ## Workflow stages
 
 1. Fetch service context (tier, owner, language)
-2. **INPUT node (human gate)** — after context load, one responder can proceed or stop before any AI work (`human_gate_before_plan`; early feature — validate in Port before demoing)
+2. **INPUT node (human gate)** — after context load, one responder authorizes **running the AI to draft** an implementation plan (`human_gate_before_plan`), or cancels the run before any AI work.
 3. Branch: Cloud vs On-Premise plan generation
 4. AI generates Terraform plan + Mermaid architecture
 5. Create `cloud_resource_request` entity with plan output

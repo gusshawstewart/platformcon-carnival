@@ -24,7 +24,7 @@ By the end, when a developer needs a new cloud resource:
 
 1. They fill in a simple form — service, environment, resource type
 2. Port **fetches context** about their service automatically
-3. An AI agent **generates an implementation plan + architecture diagram** using their GitHub and Notion context
+3. An AI agent **generates an implementation plan + architecture diagram** from the catalog context and the request details (no workshop dependency on GitHub or Notion MCP inside the workflow)
 4. For non-production: **auto-approved**, PR opened, Slack notified
 5. For production: **approval request sent to Slack**, one click to approve
 6. The resource is tracked in the catalog — linked to the service that owns it

@@ -6,7 +6,8 @@ You are helping me install the **AI workflow** for the PlatformCon-Carne worksho
 
 **Notes:**
 - **Workflows may be beta** — if import is disabled, say what to ask an admin.
-- **INPUT node** `human_gate_before_plan`: after service context loads, someone must click **Proceed with AI plan** or **Stop run** before AI runs.
+- **INPUT node** `human_gate_before_plan`: after service context loads, someone chooses **Yes — generate draft plan with AI** or **No — cancel run** before any AI step runs. That authorizes **running the AI to draft a plan**, not approving the final infrastructure change.
+- **AI nodes** use `tools: []` and **no `mcpServers`** so the workshop does not require GitHub or Notion MCP server entities in Port.
 - **Slack** nodes need secrets `SLACK_BOT_TOKEN` and `SLACK_PLATFORM_CHANNEL` to succeed; other steps may still run.
 - Webhooks use `api.getport.io`; EU tenants may need URL updates per facilitator.
 
@@ -125,15 +126,15 @@ You are helping me install the **AI workflow** for the PlatformCon-Carne worksho
     },
     {
       "identifier": "human_gate_before_plan",
-      "title": "Confirm AI plan generation (HITL preview)",
+      "title": "Authorize AI to draft a plan",
       "icon": "UserCheck",
       "config": {
         "type": "INPUT",
         "userInputs": {
           "properties": {
             "reviewer_notes": {
-              "title": "Notes for approvers (optional)",
-              "description": "Optional context recorded with this decision.",
+              "title": "Notes (optional)",
+              "description": "Optional context stored with this decision (e.g. ticket link or context for auditors).",
               "type": "string",
               "default": ""
             }
@@ -141,12 +142,12 @@ You are helping me install the **AI workflow** for the PlatformCon-Carne worksho
           "buttons": [
             {
               "identifier": "proceed",
-              "label": "Proceed with AI plan",
+              "label": "Yes — generate draft plan with AI",
               "variant": "PRIMARY"
             },
             {
               "identifier": "stop",
-              "label": "Stop run",
+              "label": "No — cancel run",
               "variant": "DANGER"
             }
           ]
@@ -155,13 +156,13 @@ You are helping me install the **AI workflow** for the PlatformCon-Carne worksho
           {
             "evaluationMethod": "button",
             "identifier": "proceed",
-            "title": "Proceed",
+            "title": "AI authorized",
             "numOfResponders": 1
           },
           {
             "evaluationMethod": "button",
             "identifier": "stop",
-            "title": "Stopped",
+            "title": "Run cancelled",
             "numOfResponders": 1
           }
         ]
@@ -190,7 +191,7 @@ You are helping me install the **AI workflow** for the PlatformCon-Carne worksho
               "type": "section",
               "text": {
                 "type": "mrkdwn",
-                "text": "*Resource request stopped at human gate*\nSomeone chose *Stop run* before AI plan generation.\n*Service:* {{ .outputs[\"fetch_service_context\"].service_title }}\n*Notes:* {{ .outputs[\"human_gate_before_plan\"].reviewer_notes }}"
+                "text": "*Resource request cancelled before AI*\nSomeone chose *No — cancel run* (AI draft was not authorized).\n*Service:* {{ .outputs[\"fetch_service_context\"].service_title }}\n*Notes:* {{ .outputs[\"human_gate_before_plan\"].reviewer_notes }}"
               }
             }
           ]
@@ -227,13 +228,9 @@ You are helping me install the **AI workflow** for the PlatformCon-Carne worksho
       "icon": "AI",
       "config": {
         "type": "AI",
-        "userPrompt": "Generate an implementation plan for provisioning a cloud resource.\n\nRequest Details:\n- Resource Type: {{ .outputs[\"trigger\"].cloud_resource_type }}\n- Environment: {{ .outputs[\"trigger\"].environment }}\n- Service: {{ .outputs[\"fetch_service_context\"].service_title }}\n- Service Tier: {{ .outputs[\"fetch_service_context\"].service_tier }}\n- Additional Requirements: {{ .outputs[\"trigger\"].additional_context }}\n\nSearch GitHub for existing Terraform modules that match this resource type before writing the plan.\n\nGenerate:\n1. **Implementation Plan** - Step-by-step Terraform plan referencing any existing modules found\n2. **Architecture Diagram** - A SIMPLE Mermaid flowchart with MAXIMUM 5-7 nodes showing:\n   - VPC/Environment container\n   - Application service\n   - The new resource\n   - Monitoring\n\n```mermaid\nflowchart TB\n    subgraph VPC[\"Environment VPC\"]\n        subgraph App[\"Application Tier\"]\n            Service[Service Name]\n        end\n        Service -->|connects| DB[(Database)]\n    end\n    subgraph Monitoring\n        Logs[CloudWatch]\n    end\n    DB --> Logs\n```\n\nKeep it simple. NO security groups, NO IAM, NO KMS in the diagram.",
+        "userPrompt": "Generate an implementation plan for provisioning a cloud resource.\n\nRequest Details:\n- Resource Type: {{ .outputs[\"trigger\"].cloud_resource_type }}\n- Environment: {{ .outputs[\"trigger\"].environment }}\n- Service: {{ .outputs[\"fetch_service_context\"].service_title }}\n- Service Tier: {{ .outputs[\"fetch_service_context\"].service_tier }}\n- Additional Requirements: {{ .outputs[\"trigger\"].additional_context }}\n\nUse conventional Terraform patterns for this resource type (no external repo or docs lookup required).\n\nGenerate:\n1. **Implementation Plan** - Step-by-step Terraform plan using conventional patterns for this resource type\n2. **Architecture Diagram** - A SIMPLE Mermaid flowchart with MAXIMUM 5-7 nodes showing:\n   - VPC/Environment container\n   - Application service\n   - The new resource\n   - Monitoring\n\n```mermaid\nflowchart TB\n    subgraph VPC[\"Environment VPC\"]\n        subgraph App[\"Application Tier\"]\n            Service[Service Name]\n        end\n        Service -->|connects| DB[(Database)]\n    end\n    subgraph Monitoring\n        Logs[CloudWatch]\n    end\n    DB --> Logs\n```\n\nKeep it simple. NO security groups, NO IAM, NO KMS in the diagram.",
         "systemPrompt": "You are an infrastructure architect at PlatformCon-Carne. Generate clear, actionable implementation plans for AWS resources using Terraform. Be concise. Gold-tier services get production-grade sizing (Multi-AZ, larger instances). Silver gets standard. Bronze gets minimal.",
-        "tools": ["git_hub_search_code", "git_hub_get_file_content", "notion_search_notion"],
-        "mcpServers": [
-          {"identifier": "git_hub"},
-          {"identifier": "notion"}
-        ],
+        "tools": [],
         "outputSchema": {
           "type": "object",
           "properties": {
@@ -256,11 +253,7 @@ You are helping me install the **AI workflow** for the PlatformCon-Carne worksho
         "type": "AI",
         "userPrompt": "Generate an implementation plan for provisioning an on-premise resource.\n\nRequest Details:\n- Resource Type: {{ .outputs[\"trigger\"].onprem_resource_type }}\n- Environment: {{ .outputs[\"trigger\"].environment }}\n- Service: {{ .outputs[\"fetch_service_context\"].service_title }}\n- Additional Requirements: {{ .outputs[\"trigger\"].additional_context }}\n\nGenerate:\n1. **Implementation Plan** - Step-by-step VMware vSphere provisioning plan\n2. **Architecture Diagram** - A SIMPLE Mermaid flowchart with MAXIMUM 5-7 nodes.",
         "systemPrompt": "You are an infrastructure architect at PlatformCon-Carne. Generate clear, actionable plans for on-premise VMware resources. Be concise.",
-        "tools": ["git_hub_search_code", "notion_search_notion"],
-        "mcpServers": [
-          {"identifier": "git_hub"},
-          {"identifier": "notion"}
-        ],
+        "tools": [],
         "outputSchema": {
           "type": "object",
           "properties": {

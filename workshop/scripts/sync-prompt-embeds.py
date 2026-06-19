@@ -96,7 +96,8 @@ Create **six** entities on blueprint `service`. If Port has **bulk import / JSON
 
 **Notes:**
 - **Workflows may be beta** — if import is disabled, say what to ask an admin.
-- **INPUT node** `human_gate_before_plan`: after service context loads, someone must click **Proceed with AI plan** or **Stop run** before AI runs.
+- **INPUT node** `human_gate_before_plan`: after service context loads, someone chooses **Yes — generate draft plan with AI** or **No — cancel run** before any AI step runs. That authorizes **running the AI to draft a plan**, not approving the final infrastructure change.
+- **AI nodes** use `tools: []` and **no `mcpServers`** so the workshop does not require GitHub or Notion MCP server entities in Port.
 - **Slack** nodes need secrets `SLACK_BOT_TOKEN` and `SLACK_PLATFORM_CHANNEL` to succeed; other steps may still run.
 - Webhooks use `api.getport.io`; EU tenants may need URL updates per facilitator.
 
@@ -128,7 +129,7 @@ Create **six** entities on blueprint `service`. If Port has **bulk import / JSON
 1. **Self-Service** → **Create a new resource**.
 2. **Cloud** · **RDS Database** · **Staging** · **payments-service** · Additional requirements: `Standard configuration with automated backups enabled`.
 3. Submit → open the **workflow run**.
-4. If paused on **Confirm AI plan generation (HITL preview)** → **Provide inputs** → **Proceed with AI plan**.
+4. If paused on **Authorize AI to draft a plan** → **Provide inputs** → **Yes — generate draft plan with AI**.
 5. Confirm a `cloud_resource_request` exists with **implementation plan** and **architecture** filled in.
 
 ### B — Production path

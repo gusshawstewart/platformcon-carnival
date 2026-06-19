@@ -11,7 +11,7 @@ You are helping me **verify** the PlatformCon-Carne workshop in Port.
 1. **Self-Service** → **Create a new resource**.
 2. **Cloud** · **RDS Database** · **Staging** · **payments-service** · Additional requirements: `Standard configuration with automated backups enabled`.
 3. Submit → open the **workflow run**.
-4. If paused on **Confirm AI plan generation (HITL preview)** → **Provide inputs** → **Proceed with AI plan**.
+4. If paused on **Authorize AI to draft a plan** → **Provide inputs** → **Yes — generate draft plan with AI**.
 5. Confirm a `cloud_resource_request` exists with **implementation plan** and **architecture** filled in.
 
 ### B — Production path
