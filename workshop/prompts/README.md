@@ -2,6 +2,8 @@
 
 Use these files **in order** during the workshop.
 
+**Before step 0:** claim a row and log in from the **[workshop credentials sheet](https://docs.google.com/spreadsheets/d/1U2ywpAVrfdG6H-iTPT0__L26MKdA5o6mqZyzp61CzLk/edit)** (add your name and email; use that row’s username and password). **No Port signup** for this workshop unless your facilitator says otherwise.
+
 ## For attendees (new Port users)
 
 Steps **1–3** embed **full JSON** inside the markdown. Step **4** is mostly a **click-through checklist**; it only includes optional **backup entity JSON** if you need a quick sample without waiting for AI.

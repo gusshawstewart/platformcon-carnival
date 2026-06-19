@@ -11,7 +11,18 @@ Start here:
 - **[workshop/README.md](./workshop/README.md)** — how to run the session in the browser  
 - **[workshop/prompts/](./workshop/prompts/)** — copy-paste prompts with **embedded JSON** for Port (GitHub in a browser is enough)  
 
-Pre-provisioned Port organizations and credentials are **outside this repo** (you maintain those separately).
+### Workshop logins (attendees)
+
+**You do not sign up or create your own Port account for this session.** Use a **pre-provisioned login** from the facilitator’s sheet:
+
+**[Workshop credentials (Google Sheet)](https://docs.google.com/spreadsheets/d/1U2ywpAVrfdG6H-iTPT0__L26MKdA5o6mqZyzp61CzLk/edit)**
+
+1. Open the sheet (access may be **restricted until the event day**—ask the facilitator if it is locked).
+2. Pick a **free row** that still has empty **name / email** columns (wording may vary slightly in the sheet).
+3. Add **your name and email** in that row so others know the seat is taken.
+4. Use the **username and password** on that same row to **log in to Port** (and the **Portal URL** if the sheet includes one).
+
+Details and facilitator notes: [workshop/README.md](./workshop/README.md) · [workshop/FACILITATOR.md](./workshop/FACILITATOR.md).
 
 ---
 
@@ -46,7 +57,7 @@ See [company-context.md](./company-context.md) for the full backstory.
 
 ## How to run the workshop
 
-1. Use the **Port organization** your facilitator assigned ([workshop/FACILITATOR.md](./workshop/FACILITATOR.md)).
+1. **Claim a row** in the **[workshop credentials sheet](https://docs.google.com/spreadsheets/d/1U2ywpAVrfdG6H-iTPT0__L26MKdA5o6mqZyzp61CzLk/edit)** (add your name and email), then **log in with that row’s username and password**—**no self-service signup** for this workshop.
 2. Open **[workshop/README.md](./workshop/README.md)** and the numbered files under **[workshop/prompts/](./workshop/prompts/)** (on GitHub or after a clone). Follow steps **0 → 4** in order.
 3. Optionally paste each prompt into **Port AI** for a guided checklist while you click in Port.
 
@@ -86,9 +97,10 @@ No visibility  →  Catalog  →  Self-Service Action  →  AI Workflow  →  De
 ## Resources
 
 - [Workshop (attendees)](./workshop/README.md) · [Facilitator notes](./workshop/FACILITATOR.md) · [Prompt library](./workshop/prompts/)
+- [Workshop credentials (Google Sheet)](https://docs.google.com/spreadsheets/d/1U2ywpAVrfdG6H-iTPT0__L26MKdA5o6mqZyzp61CzLk/edit) — claim a row; **no signup** for the live session
 - [Port Documentation](https://docs.getport.io)
 - [AI Agents in Port](https://docs.getport.io/ai-interfaces/ai-agents/overview)
-- [Port Free Tier](https://app.getport.io/signup)
+- [Port Free Tier](https://app.getport.io/signup) — **not** required for this workshop if you use a sheet login above
 
 ### Facilitators:
 - **Facilitators:** [workshop/FACILITATOR.md](./workshop/FACILITATOR.md) — pre-provisioned Portals, seating, beta / onboarding  

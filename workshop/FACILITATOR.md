@@ -4,14 +4,16 @@ You said you will **create pre-provisioned Port organizations separately**. This
 
 ## Pre-provisioned Portals (your responsibility)
 
-Suggested pattern:
+**Attendee-facing sheet (this workshop):** **[Workshop credentials](https://docs.google.com/spreadsheets/d/1U2ywpAVrfdG6H-iTPT0__L26MKdA5o6mqZyzp61CzLk/edit)** — each row has **username / password** (and usually **Portal URL**). Attendees **claim a row** by adding **name and email**, then log in with that row’s credentials. **They must not sign up for Port** for this session unless you explicitly run a different format. You can keep the sheet **restricted until event day**; unlock it when the room needs access.
+
+Suggested pattern for the sheet (adjust column headers to match yours):
 
 - **Pool** of N disposable Port orgs (or seats), each already past first-time setup where possible.
-- **One row per seat** in a shared tracker (Google Sheet or internal doc). Example columns:
+- **One row per seat** in the shared tracker. Example columns:
   - **Portal / app URL** (e.g. `https://app.getport.io` vs EU)
   - **Login identifier** (email or username Port expects)
   - **Temporary password** or **invite link** (prefer invites if your IT policy allows)
-  - **Claimed by** (attendee name — empty until they pick a row)
+  - **Claimed by / name** and **email** (empty until they pick a row)
   - **Region** (US vs EU MCP / API if relevant)
   - **Notes** (e.g. “workflows beta enabled”, “Slack secrets not configured”)
 
