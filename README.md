@@ -1,16 +1,16 @@
 # From IDP to AEP: Building an AI-Enhanced Platform
 
-**PlatformCon Workshop** · ~1 hour · Port (primary) · optional Cursor for facilitators
+**PlatformCon Workshop** · ~1 hour · Port + Port AI
 
 ---
 
-## Live session (most attendees)
+## Live session (attendees)
 
-**You do not need Cursor.** Use the workshop path:
+Start here:
 
-- **[workshop/README.md](./workshop/README.md)** — start here  
-- **[workshop/prompts/](./workshop/prompts/)** — prompts for **Port AI** with **embedded JSON** (GitHub in a browser is enough; no local clone required for copy-paste)  
-- Facilitators: **[workshop/FACILITATOR.md](./workshop/FACILITATOR.md)** — pre-provisioned Portals, seating, beta / onboarding notes  
+- **[workshop/README.md](./workshop/README.md)** — how to run the session in the browser  
+- **[workshop/prompts/](./workshop/prompts/)** — copy-paste prompts with **embedded JSON** for Port (GitHub in a browser is enough)  
+- **Facilitators:** [workshop/FACILITATOR.md](./workshop/FACILITATOR.md) — pre-provisioned Portals, seating, beta / onboarding  
 
 Pre-provisioned Port organizations and credentials are **outside this repo** (you maintain those separately).
 
@@ -45,41 +45,13 @@ See [company-context.md](./company-context.md) for the full backstory.
 
 ---
 
-## How to set this up
+## How to run the workshop
 
-### Path A — Workshop / live session (recommended)
+1. Use the **Port organization** your facilitator assigned ([workshop/FACILITATOR.md](./workshop/FACILITATOR.md)).
+2. Open **[workshop/README.md](./workshop/README.md)** and the numbered files under **[workshop/prompts/](./workshop/prompts/)** (on GitHub or after a clone). Follow steps **0 → 4** in order.
+3. Optionally paste each prompt into **Port AI** for a guided checklist while you click in Port.
 
-1. Use the **Port organization** your facilitator assigned (see [workshop/FACILITATOR.md](./workshop/FACILITATOR.md)).
-2. Clone or download this repo so you have the JSON files locally:
-```bash
-git clone https://github.com/YOUR_ORG/platformcon-carne.git
-cd platformcon-carne
-```
-3. Follow **[workshop/README.md](./workshop/README.md)** and the numbered prompts under **[workshop/prompts/](./workshop/prompts/)**.
-
-### Path B — Cursor + Port MCP (optional)
-
-For facilitators or attendees who already use **Cursor** with MCP:
-
-1. Clone this repo (same as above).
-2. Configure the Port MCP in `~/.cursor/mcp.json`:
-```json
-{
-  "mcpServers": {
-    "port": {
-      "url": "https://mcp.port.io/v1"
-    }
-  }
-}
-```
-> EU region: use `https://mcp.port-eu.io/v1` — check at https://app.getport.io/settings/credentials
-
-3. Restart Cursor and authenticate when prompted.
-
-4. Open this repo in Cursor, open the AI chat, and say:  
-   **"Set up the PlatformCon-Carne cloud resource provisioning platform"**
-
-The agent skill at [`.cursor/skills/platformcon-workshop/SKILL.md`](./.cursor/skills/platformcon-workshop/SKILL.md) runs the same steps as the workshop prompts.
+Cloning the repo is **optional** for attendees—the prompts already contain the JSON to import.
 
 ---
 
@@ -114,11 +86,16 @@ No visibility  →  Catalog  →  Self-Service Action  →  AI Workflow  →  De
 
 ## Resources
 
-- [Workshop path (attendees)](./workshop/README.md) · [Facilitator notes](./workshop/FACILITATOR.md) · [Prompt library](./workshop/prompts/)
+- [Workshop (attendees)](./workshop/README.md) · [Facilitator notes](./workshop/FACILITATOR.md) · [Prompt library](./workshop/prompts/)
 - [Port Documentation](https://docs.getport.io)
-- [Port MCP Setup](https://docs.getport.io/guides-and-tutorials/setup-port-mcp)
 - [AI Agents in Port](https://docs.getport.io/ai-interfaces/ai-agents/overview)
 - [Port Free Tier](https://app.getport.io/signup)
+
+---
+
+### Optional: Cursor + Port MCP
+
+If you use **[Cursor](https://cursor.com)** and want the agent to drive Port via MCP, configure the [Port MCP](https://docs.getport.io/guides-and-tutorials/setup-port-mcp) (`https://mcp.port.io/v1`, or EU `https://mcp.port-eu.io/v1`), then use the skill at [`.cursor/skills/platformcon-workshop/SKILL.md`](./.cursor/skills/platformcon-workshop/SKILL.md). Authoring JSON for that path lives under [`.cursor/skills/platformcon-workshop/assets/`](./.cursor/skills/platformcon-workshop/assets/). **Most workshop participants only need Port + [workshop/prompts/](./workshop/prompts/).**
 
 ---
 

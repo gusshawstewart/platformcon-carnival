@@ -1,6 +1,6 @@
 You are helping me install the **AI workflow** for the PlatformCon-Carne workshop in Port.
 
-**Who this is for:** New Port users. The workflow JSON is **in this message**. Paste **only the JSON** (see “How to copy” below) into **Settings → Workflows → Import** (or your Port version’s equivalent). You do not need files from disk.
+**Who this is for:** New Port users. The full workflow definition is **in the JSON box below**. In Port, open **Settings → Workflows → Import** (or your Port version’s equivalent). **Select all the text inside that box**, copy, and paste into the import field. You do not need files from disk.
 
 **Goal:** Workflow identifier `request_cloud_resource` is **published** and wired to the same self-service action from the previous step. Submitting the form should start a run.
 
@@ -16,8 +16,6 @@ You are helping me install the **AI workflow** for the PlatformCon-Carne worksho
 ---
 
 ## Full workflow JSON
-
-**How to copy:** The block below is wrapped in lines of **five** backtick characters so the workflow text can contain normal Markdown code fences. Copy **only** the JSON—everything **after** the first delimiter line and **before** the final delimiter line (do not include the backtick lines themselves).
 
 `````
 {

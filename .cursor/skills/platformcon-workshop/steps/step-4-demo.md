@@ -1,6 +1,8 @@
 # Step 4 — Test the Setup
 
-Walk the user through verifying the platform works.
+**Audience:** Attendees (and facilitators helping a table) after the catalog, action, and workflow are in place. This step is a **hands-on smoke test** in the Port UI—not another import.
+
+Walk through verifying the platform works.
 
 ## Staging request (auto-approved)
 
@@ -20,11 +22,11 @@ Repeat with Environment: **Production**. Verify Slack shows an approval request 
 
 ## Backup
 
-If the AI node is slow, import `step-4-demo-flow/backup-entity.json` via Port UI to show expected output.
+If the AI node is slow, import `.cursor/skills/platformcon-workshop/assets/step-4-demo-flow/backup-entity.json` via Port UI to show expected output.
 
 ## Demo script
 
-For presenter notes, see `step-4-demo-flow/README.md`.
+For presenter notes, see `.cursor/skills/platformcon-workshop/assets/step-4-demo-flow/README.md`.
 
 ## Done when
 

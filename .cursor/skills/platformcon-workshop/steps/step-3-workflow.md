@@ -8,7 +8,7 @@ Create the workflow that processes requests end-to-end.
 upsert_workflow
 ```
 
-Read the full payload from: `step-3-ai-workflow/workflow.json`
+Read the full payload from: `.cursor/skills/platformcon-workshop/assets/step-3-ai-workflow/workflow.json`
 
 For workflow structure guidance, you may call Port MCP `load_skill` with `name: "workflows"` if needed.
 
@@ -28,4 +28,4 @@ Workflow is published and linked to the Step 2 action trigger.
 
 ## Fallback
 
-Port UI → Workflows → Import — use `step-3-ai-workflow/workflow.json`.
+Port UI → Workflows → Import — use `.cursor/skills/platformcon-workshop/assets/step-3-ai-workflow/workflow.json`.

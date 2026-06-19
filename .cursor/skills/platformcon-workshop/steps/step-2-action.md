@@ -8,7 +8,7 @@ Create the form that replaces Jira tickets.
 upsert_action
 ```
 
-Read the full payload from: `step-2-self-service-action/workflow.json`
+Read the full payload from: `.cursor/skills/platformcon-workshop/assets/step-2-self-service-action/workflow.json`
 
 Do not modify the JSON unless the user asks to customize.
 
@@ -24,4 +24,4 @@ Do not modify the JSON unless the user asks to customize.
 
 ## Fallback
 
-Port UI → Settings → Actions → Import — use `step-2-self-service-action/workflow.json`.
+Port UI → Settings → Actions → Import — use `.cursor/skills/platformcon-workshop/assets/step-2-self-service-action/workflow.json`.

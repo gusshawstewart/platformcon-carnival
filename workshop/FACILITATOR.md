@@ -30,7 +30,7 @@ You do not need legal names in advance if **rows are anonymous until claimed**. 
 If workflows are **beta-gated** in some orgs:
 
 - Confirm each **pooled org** has workflows (or the same beta flag) **before** the session.
-- Keep the **import fallback** front and center: [../step-3-ai-workflow/workflow.json](../step-3-ai-workflow/workflow.json) via **Settings → Workflows → Import** (wording may vary slightly by Port version).
+- Keep the **import fallback** front and center: [.cursor/skills/platformcon-workshop/assets/step-3-ai-workflow/workflow.json](../.cursor/skills/platformcon-workshop/assets/step-3-ai-workflow/workflow.json) via **Settings → Workflows → Import** (wording may vary slightly by Port version).
 
 ## Onboarding (“Vibe build” and similar)
 
@@ -53,8 +53,8 @@ Point the room at **[workshop/README.md](./README.md)** and the **[prompts](./pr
 
 ## Keeping workshop prompts in sync
 
-The files `workshop/prompts/01`–`04` **embed** the same JSON as `step-*` / `sample-data/`. From repo root:
+The files `workshop/prompts/01`–`04` **embed** the same JSON as the **Cursor skill assets** (`.cursor/skills/platformcon-workshop/assets/`). From repo root:
 
-1. After you edit JSON under `step-*` / `sample-data/`, run **`python3 workshop/scripts/sync-prompt-embeds.py`** so the prompt files pick up the changes.
+1. After you edit JSON under **assets** (or run `apply_port_export_shape.py` on the workflow file there), run **`python3 workshop/scripts/sync-prompt-embeds.py`** so the prompt files pick up the changes.
 
-2. To align `step-3-ai-workflow/workflow.json` with a typical **Port UI export** (null trigger titles, `api.port.io` on the catalog fetch, `category`, `links` / `verbose` on nodes, Slack `body` key order, `slack_hitl_gate_stopped` after `open_pr`, etc.), run **`python3 workshop/scripts/apply_port_export_shape.py`**, then run **`sync-prompt-embeds.py`** again.
+2. To align `.cursor/skills/platformcon-workshop/assets/step-3-ai-workflow/workflow.json` with a typical **Port UI export** (null trigger titles, `api.port.io` on the catalog fetch, `category`, `links` / `verbose` on nodes, Slack `body` key order, `slack_hitl_gate_stopped` after `open_pr`, etc.), run **`python3 workshop/scripts/apply_port_export_shape.py`**, then run **`sync-prompt-embeds.py`** again.

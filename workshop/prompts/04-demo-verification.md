@@ -1,26 +1,28 @@
-You are helping me **verify** the PlatformCon-Carne workshop in Port.
+This is **Step 4 — smoke test your build** for **you as an attendee** (after steps 0–3).
 
-**Who this is for:** New Port users. You only see this chat—I run everything in the Port UI.
+**What this step is for:** Prove the catalog, self-service form, and workflow work end-to-end. You will run one **staging** request (non-production path) and one **production** request (approval path), and check the results in Port (and Slack, if your org configured it).
 
-**Prerequisites:** Steps 0–3 done (branding, three blueprints + services, action, workflow).
+**Optional Port AI:** Paste this file into Port AI if you want a **checklist-style coach** while you work. Port AI cannot use Port for you — **you** still do every click in the browser (Self-Service, workflow run, **Authorize AI to draft a plan**, entity pages).
+
+**Prerequisites:** Branding done, blueprints + sample services loaded, action imported, workflow imported (steps 0–3).
 
 ---
 
-### A — Staging path
+### A — Staging path (what you should see)
 
-1. **Self-Service** → **Create a new resource**.
-2. **Cloud** · **RDS Database** · **Staging** · **payments-service** · Additional requirements: `Standard configuration with automated backups enabled`.
-3. Submit → open the **workflow run**.
-4. If paused on **Authorize AI to draft a plan** → **Provide inputs** → **Yes — generate draft plan with AI**.
-5. Confirm a `cloud_resource_request` exists with **implementation plan** and **architecture** filled in.
+1. In Port, open **Self-Service** → **Create a new resource**.
+2. Submit: **Cloud** · **RDS Database** · **Staging** · **payments-service** · Additional requirements: `Standard configuration with automated backups enabled`.
+3. Open the **workflow run**. If it pauses on **Authorize AI to draft a plan** → **Provide inputs** → **Yes — generate draft plan with AI**.
+4. Confirm a **resource request** entity (blueprint `cloud_resource_request`) appears with **implementation plan** and **architecture** filled in (entity page / tabs, depending on your layout).
+5. If Slack is configured for your org, check the channel for an **auto-approved** style message.
 
-### B — Production path
+### B — Production path (what you should see)
 
-Same as A but **Environment: Production**. Confirm the run hits the production branch (Slack only works if secrets exist).
+Repeat **A**, but set **Environment** to **Production**. Confirm the run follows the **production** branch (e.g. Slack approval message with links — only if secrets exist).
 
-### C — Backup entity (optional)
+### C — Backup sample (optional)
 
-If the facilitator wants a **static** request without waiting for AI, import this entity on blueprint `cloud_resource_request` (import / API / UI—whatever my Port exposes). Copy **only** the JSON between the two delimiter lines of **five** backticks (do not paste the backtick lines themselves).
+If **AI is slow** or you want to **see example plan text without waiting for the AI node**, you or a facilitator can import this ready-made entity on blueprint **`cloud_resource_request`** using Port’s entity import (or equivalent). **Select all the text in the sample JSON box below**, copy, and paste into that import flow.
 
 `````
 {
@@ -46,6 +48,6 @@ If the facilitator wants a **static** request without waiting for AI, import thi
 }
 `````
 
-**Done when:** I have seen staging behavior and production branch behavior (or the facilitator signs off).
+**Done when:** You have personally completed **A** and **B** in Port (or you and a facilitator have walked through the same checks together at your table).
 
-Optional talk track: I can open `step-4-demo-flow/README.md` in the workshop repo if I have it—otherwise ignore.
+Presenter notes (optional): [step-4-demo-flow/README.md](../../.cursor/skills/platformcon-workshop/assets/step-4-demo-flow/README.md) in this repo.

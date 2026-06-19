@@ -5,6 +5,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 PROMPTS = ROOT / "workshop" / "prompts"
+# JSON sources live with the Cursor skill (Port-in-browser attendees use embedded prompts, not these paths)
+ASSETS = ROOT / ".cursor" / "skills" / "platformcon-workshop" / "assets"
 
 
 def fence(n: int = 3) -> str:
@@ -12,16 +14,16 @@ def fence(n: int = 3) -> str:
 
 
 def main() -> None:
-    s1 = (ROOT / "step-1-catalog-foundation/service.json").read_text().strip()
-    s2 = (ROOT / "step-1-catalog-foundation/cloud_resource_request.json").read_text().strip()
-    s3 = (ROOT / "step-1-catalog-foundation/cloudResource.json").read_text().strip()
-    services = (ROOT / "sample-data/services.json").read_text().strip()
+    s1 = (ASSETS / "step-1-catalog-foundation/service.json").read_text().strip()
+    s2 = (ASSETS / "step-1-catalog-foundation/cloud_resource_request.json").read_text().strip()
+    s3 = (ASSETS / "step-1-catalog-foundation/cloudResource.json").read_text().strip()
+    services = (ASSETS / "sample-data/services.json").read_text().strip()
 
     md01 = f'''You are helping me build the **catalog foundation** for the PlatformCon-Carne workshop in Port.
 
 **Who this is for:** New Port users. You (Port AI) only see this chat. The JSON below is **included so I can copy it** into Port without hunting files on disk.
 
-**What I will do in Port:** Use **Builder → Blueprints → Import** (or paste JSON), then create **service** entities from the sample list. If my Port version only has a visual blueprint editor, walk me field-by-field to match the JSON **exactly** (same property identifiers and enums).
+**What I will do in Port:** Use **Builder → Blueprints → Import** (or paste JSON), then create **service** entities from the sample list. For each numbered section, **select all the text inside that JSON box**, copy, and paste into Port’s import. If my Port version only has a visual blueprint editor, walk me field-by-field to match the JSON **exactly** (same property identifiers and enums).
 
 ---
 
@@ -65,16 +67,18 @@ Create **six** entities on blueprint `service`. If Port has **bulk import / JSON
 '''
     (PROMPTS / "01-catalog-and-sample-data.md").write_text(md01)
 
-    w2 = (ROOT / "step-2-self-service-action/workflow.json").read_text().strip()
+    w2 = (ASSETS / "step-2-self-service-action/workflow.json").read_text().strip()
     md02 = f'''You are helping me create the **self-service action** for the PlatformCon-Carne workshop in Port.
 
-**Who this is for:** New Port users. Copy the JSON below and paste it into **Settings → Self-service → Actions → Import** (wording may vary). You do not have my disk; everything needed is **in this message**.
+**Who this is for:** New Port users. You do not need files on disk—the JSON is **in the box below**.
+
+In Port, open **Settings → Self-service → Actions → Import** (wording may vary). **Select all the text in that JSON box**, copy, and paste into the import field.
 
 **Goal:** Action **Create a new resource** appears under Self-Service. Form: infrastructure type, resource types (cloud vs on-prem), environment, **service** entity picker (`service` blueprint), additional context.
 
 ---
 
-## Action + trigger JSON (copy all of this)
+## Action + trigger JSON
 
 {fence(3)}json
 {w2}
@@ -86,11 +90,11 @@ Create **six** entities on blueprint `service`. If Port has **bulk import / JSON
 '''
     (PROMPTS / "02-self-service-action.md").write_text(md02)
 
-    w3 = (ROOT / "step-3-ai-workflow/workflow.json").read_text().strip()
+    w3 = (ASSETS / "step-3-ai-workflow/workflow.json").read_text().strip()
     n = 5
     md03 = f'''You are helping me install the **AI workflow** for the PlatformCon-Carne workshop in Port.
 
-**Who this is for:** New Port users. The workflow JSON is **in this message**. Paste **only the JSON** (see “How to copy” below) into **Settings → Workflows → Import** (or your Port version’s equivalent). You do not need files from disk.
+**Who this is for:** New Port users. The full workflow definition is **in the JSON box below**. In Port, open **Settings → Workflows → Import** (or your Port version’s equivalent). **Select all the text inside that box**, copy, and paste into the import field. You do not need files from disk.
 
 **Goal:** Workflow identifier `request_cloud_resource` is **published** and wired to the same self-service action from the previous step. Submitting the form should start a run.
 
@@ -107,46 +111,46 @@ Create **six** entities on blueprint `service`. If Port has **bulk import / JSON
 
 ## Full workflow JSON
 
-**How to copy:** The block below is wrapped in lines of **five** backtick characters so the workflow text can contain normal Markdown code fences. Copy **only** the JSON—everything **after** the first delimiter line and **before** the final delimiter line (do not include the backtick lines themselves).
-
 {fence(n)}
 {w3}
 {fence(n)}
 '''
     (PROMPTS / "03-ai-workflow.md").write_text(md03)
 
-    backup = (ROOT / "step-4-demo-flow/backup-entity.json").read_text().strip()
-    md04 = f'''You are helping me **verify** the PlatformCon-Carne workshop in Port.
+    backup = (ASSETS / "step-4-demo-flow/backup-entity.json").read_text().strip()
+    md04 = f'''This is **Step 4 — smoke test your build** for **you as an attendee** (after steps 0–3).
 
-**Who this is for:** New Port users. You only see this chat—I run everything in the Port UI.
+**What this step is for:** Prove the catalog, self-service form, and workflow work end-to-end. You will run one **staging** request (non-production path) and one **production** request (approval path), and check the results in Port (and Slack, if your org configured it).
 
-**Prerequisites:** Steps 0–3 done (branding, three blueprints + services, action, workflow).
+**Optional Port AI:** Paste this file into Port AI if you want a **checklist-style coach** while you work. Port AI cannot use Port for you — **you** still do every click in the browser (Self-Service, workflow run, **Authorize AI to draft a plan**, entity pages).
+
+**Prerequisites:** Branding done, blueprints + sample services loaded, action imported, workflow imported (steps 0–3).
 
 ---
 
-### A — Staging path
+### A — Staging path (what you should see)
 
-1. **Self-Service** → **Create a new resource**.
-2. **Cloud** · **RDS Database** · **Staging** · **payments-service** · Additional requirements: `Standard configuration with automated backups enabled`.
-3. Submit → open the **workflow run**.
-4. If paused on **Authorize AI to draft a plan** → **Provide inputs** → **Yes — generate draft plan with AI**.
-5. Confirm a `cloud_resource_request` exists with **implementation plan** and **architecture** filled in.
+1. In Port, open **Self-Service** → **Create a new resource**.
+2. Submit: **Cloud** · **RDS Database** · **Staging** · **payments-service** · Additional requirements: `Standard configuration with automated backups enabled`.
+3. Open the **workflow run**. If it pauses on **Authorize AI to draft a plan** → **Provide inputs** → **Yes — generate draft plan with AI**.
+4. Confirm a **resource request** entity (blueprint `cloud_resource_request`) appears with **implementation plan** and **architecture** filled in (entity page / tabs, depending on your layout).
+5. If Slack is configured for your org, check the channel for an **auto-approved** style message.
 
-### B — Production path
+### B — Production path (what you should see)
 
-Same as A but **Environment: Production**. Confirm the run hits the production branch (Slack only works if secrets exist).
+Repeat **A**, but set **Environment** to **Production**. Confirm the run follows the **production** branch (e.g. Slack approval message with links — only if secrets exist).
 
-### C — Backup entity (optional)
+### C — Backup sample (optional)
 
-If the facilitator wants a **static** request without waiting for AI, import this entity on blueprint `cloud_resource_request` (import / API / UI—whatever my Port exposes). Copy **only** the JSON between the two delimiter lines of **five** backticks (do not paste the backtick lines themselves).
+If **AI is slow** or you want to **see example plan text without waiting for the AI node**, you or a facilitator can import this ready-made entity on blueprint **`cloud_resource_request`** using Port’s entity import (or equivalent). **Select all the text in the sample JSON box below**, copy, and paste into that import flow.
 
 {fence(n)}
 {backup}
 {fence(n)}
 
-**Done when:** I have seen staging behavior and production branch behavior (or the facilitator signs off).
+**Done when:** You have personally completed **A** and **B** in Port (or you and a facilitator have walked through the same checks together at your table).
 
-Optional talk track: I can open `step-4-demo-flow/README.md` in the workshop repo if I have it—otherwise ignore.
+Presenter notes (optional): [step-4-demo-flow/README.md](../../.cursor/skills/platformcon-workshop/assets/step-4-demo-flow/README.md) in this repo.
 '''
     (PROMPTS / "04-demo-verification.md").write_text(md04)
     print("Updated workshop/prompts/01–04 from step-* JSON files.")

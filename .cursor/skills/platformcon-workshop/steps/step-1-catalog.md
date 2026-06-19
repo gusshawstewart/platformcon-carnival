@@ -8,7 +8,7 @@ Create three blueprints, then load sample service entities. The catalog is the A
 upsert_blueprint
 ```
 
-Read payload from: `step-1-catalog-foundation/service.json`
+Read payload from: `.cursor/skills/platformcon-workshop/assets/step-1-catalog-foundation/service.json`
 
 The `tier` property drives AI sizing — Gold services get production-grade resources.
 
@@ -18,7 +18,7 @@ The `tier` property drives AI sizing — Gold services get production-grade reso
 upsert_blueprint
 ```
 
-Read payload from: `step-1-catalog-foundation/cloud_resource_request.json`
+Read payload from: `.cursor/skills/platformcon-workshop/assets/step-1-catalog-foundation/cloud_resource_request.json`
 
 ## 1c — `cloudResource` blueprint
 
@@ -26,7 +26,7 @@ Read payload from: `step-1-catalog-foundation/cloud_resource_request.json`
 upsert_blueprint
 ```
 
-Read payload from: `step-1-catalog-foundation/cloudResource.json`
+Read payload from: `.cursor/skills/platformcon-workshop/assets/step-1-catalog-foundation/cloudResource.json`
 
 ## 1d — Sample services
 
@@ -34,7 +34,7 @@ Read payload from: `step-1-catalog-foundation/cloudResource.json`
 upsert_entity
 ```
 
-Read entities from: `sample-data/services.json` (6 services)
+Read entities from: `.cursor/skills/platformcon-workshop/assets/sample-data/services.json` (6 services)
 
 Identifiers: `payments-service`, `order-management`, `menu-catalog`, `delivery-tracking`, `user-profiles`, `notification-service`
 
@@ -44,6 +44,6 @@ All three blueprints exist and all six service entities are in the catalog.
 
 ## Fallback
 
-Port UI → Builder → Import Blueprint — use the JSON files in `step-1-catalog-foundation/`.
+Port UI → Builder → Import Blueprint — use the JSON files in `.cursor/skills/platformcon-workshop/assets/step-1-catalog-foundation/`.
 
-For entities: import from `sample-data/services.json`.
+For entities: import from `.cursor/skills/platformcon-workshop/assets/sample-data/services.json`.

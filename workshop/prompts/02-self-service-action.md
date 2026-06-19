@@ -1,12 +1,14 @@
 You are helping me create the **self-service action** for the PlatformCon-Carne workshop in Port.
 
-**Who this is for:** New Port users. Copy the JSON below and paste it into **Settings → Self-service → Actions → Import** (wording may vary). You do not have my disk; everything needed is **in this message**.
+**Who this is for:** New Port users. You do not need files on disk—the JSON is **in the box below**.
+
+In Port, open **Settings → Self-service → Actions → Import** (wording may vary). **Select all the text in that JSON box**, copy, and paste into the import field.
 
 **Goal:** Action **Create a new resource** appears under Self-Service. Form: infrastructure type, resource types (cloud vs on-prem), environment, **service** entity picker (`service` blueprint), additional context.
 
 ---
 
-## Action + trigger JSON (copy all of this)
+## Action + trigger JSON
 
 ```json
 {

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Align step-3-ai-workflow/workflow.json with a Port UI export (shape + ordering)."""
+"""Align workflow.json under the Cursor skill assets with a Port UI export (shape + ordering)."""
 
 from __future__ import annotations
 
@@ -8,7 +8,15 @@ from collections import OrderedDict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-WF = ROOT / "step-3-ai-workflow" / "workflow.json"
+WF = (
+    ROOT
+    / ".cursor"
+    / "skills"
+    / "platformcon-workshop"
+    / "assets"
+    / "step-3-ai-workflow"
+    / "workflow.json"
+)
 
 
 def main() -> None:
