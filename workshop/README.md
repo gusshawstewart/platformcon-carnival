@@ -4,7 +4,7 @@ Use this folder for **PlatformCon–style working sessions**. Everything here is
 
 ## Start here
 
-1. **Get a workshop login (no signup).** Open the **[workshop credentials sheet](https://docs.google.com/spreadsheets/d/1U2ywpAVrfdG6H-iTPT0__L26MKdA5o6mqZyzp61CzLk/edit)**. Pick a row that is not yet claimed, **add your name and email** next to it, then **log in to Port** using the **username and password** on that row (and the **Portal URL** if the sheet lists one). The sheet may stay **restricted until the event day**—if you cannot open it, ask the facilitator. **Do not create your own Port account** for this session unless the facilitator tells you to.
+1. **Get a workshop login (no signup).** Open the **[workshop credentials sheet](https://docs.google.com/spreadsheets/d/1U2ywpAVrfdG6H-iTPT0__L26MKdA5o6mqZyzp61CzLk/edit)**. Pick a row that is not yet claimed, **add your name** next to it, then **log in to Port** using the **username and password** on that row ([port.io](https://auth.getport.io/u/login/)). The sheet may stay **restricted until the event day**—if you cannot open it, ask the facilitator. **Do not create your own Port account** for this session unless the facilitator tells you to.
 2. Open the **[prompt library](./prompts/README.md)** on **GitHub** (or clone this repo if you prefer). Steps **1–3** include **ready-to-copy JSON** for imports; step **4** is a **smoke-test checklist** in Port (plus optional sample entity JSON if the AI run is slow).
 3. For each step, optionally **paste the whole prompt file** into **Port AI** so it can guide you while you use Builder / Self-Service / Workflows.
 
