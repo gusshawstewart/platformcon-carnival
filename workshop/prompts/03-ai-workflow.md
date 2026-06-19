@@ -1,24 +1,561 @@
 You are helping me install the **AI workflow** for the PlatformCon-Carne workshop in Port.
 
-**Goal:** The workflow in `step-3-ai-workflow/workflow.json` is **published** and **connected** to the same self-service action from step 2 (identifier in JSON: **`request_cloud_resource`**). After this step, submitting the form should start a workflow run.
+**Who this is for:** New Port users. The workflow JSON is **in this message**. Paste **only the JSON** (see “How to copy” below) into **Settings → Workflows → Import** (or your Port version’s equivalent). You do not need files from disk.
 
-**Source of truth:** Import from repo root:
+**Goal:** Workflow identifier `request_cloud_resource` is **published** and wired to the same self-service action from the previous step. Submitting the form should start a run.
 
-- `step-3-ai-workflow/workflow.json`
+**Notes:**
+- **Workflows may be beta** — if import is disabled, say what to ask an admin.
+- **INPUT node** `human_gate_before_plan`: after service context loads, someone must click **Proceed with AI plan** or **Stop run** before AI runs.
+- **Slack** nodes need secrets `SLACK_BOT_TOKEN` and `SLACK_PLATFORM_CHANNEL` to succeed; other steps may still run.
+- Webhooks use `api.getport.io`; EU tenants may need URL updates per facilitator.
 
-**Typical Port UI path:** **Settings** → **Workflows** → **Import** (or Builder → Workflows, depending on version) → upload or paste the JSON.
+**After import:** Tell me where to open the **run timeline** and what **waiting for input** looks like for the INPUT step.
 
-**Important notes for facilitators and attendees:**
+---
 
-- **Workflows may be beta** in some organizations. If import is disabled, say so clearly and tell me what to ask my org admin to enable.
-- This workflow includes an **INPUT** node (`human_gate_before_plan`) for early human-in-the-loop testing: after service context is fetched, a responder must **Proceed with AI plan** or **Stop run** before AI nodes run.
-- **Slack** steps need secrets (`SLACK_BOT_TOKEN`, `SLACK_PLATFORM_CHANNEL`) if those nodes should succeed; other parts can still run for a demo.
+## Full workflow JSON
 
-**Done when:**
+**How to copy:** The block below is wrapped in lines of **five** backtick characters so the workflow text can contain normal Markdown code fences. Copy **only** the JSON—everything **after** the first delimiter line and **before** the final delimiter line (do not include the backtick lines themselves).
 
-1. Workflow `request_cloud_resource` (or the title **Create a new resource**) appears as published.
-2. The self-service action trigger is still the entry point (re-importing may replace the same identifier — that is expected in this workshop).
-
-**Port API note:** Internal Port API calls in the JSON may use `api.getport.io`; your facilitator may use EU or other regions — ask if webhook URLs need swapping for your tenant.
-
-After import, walk me through **one** dry run: where to open the run timeline and what “waiting for input” looks like for the INPUT node.
+`````
+{
+  "identifier": "request_cloud_resource",
+  "title": "Create a new resource",
+  "icon": "Server",
+  "description": "Request a new cloud or on-premise resource with AI-generated implementation plan",
+  "allowAnyoneToViewRuns": true,
+  "nodes": [
+    {
+      "identifier": "trigger",
+      "title": "Request Cloud Resource",
+      "icon": "Cloud",
+      "config": {
+        "type": "SELF_SERVE_TRIGGER",
+        "userInputs": {
+          "properties": {
+            "infrastructure_type": {
+              "title": "Infrastructure",
+              "type": "string",
+              "default": "Cloud",
+              "enum": ["Cloud", "On-Premise"],
+              "enumColors": {
+                "Cloud": "turquoise",
+                "On-Premise": "purple"
+              }
+            },
+            "cloud_resource_type": {
+              "title": "Resource Type",
+              "type": "string",
+              "default": "RDS Database",
+              "visible": {
+                "jqQuery": ".form.infrastructure_type == \"Cloud\""
+              },
+              "enum": ["RDS Database", "S3 Bucket", "EC2 Instance", "EKS Cluster", "ElastiCache"]
+            },
+            "onprem_resource_type": {
+              "title": "Resource Type",
+              "type": "string",
+              "default": "Virtual Machine",
+              "visible": {
+                "jqQuery": ".form.infrastructure_type == \"On-Premise\""
+              },
+              "enum": ["Virtual Machine", "Virtual Disk", "Kubernetes Namespace"]
+            },
+            "environment": {
+              "title": "Environment",
+              "type": "string",
+              "default": "Staging",
+              "enum": ["Development", "Staging", "Production"],
+              "enumColors": {
+                "Development": "green",
+                "Staging": "yellow",
+                "Production": "red"
+              }
+            },
+            "service": {
+              "title": "Service",
+              "type": "string",
+              "format": "entity",
+              "blueprint": "service"
+            },
+            "additional_context": {
+              "title": "Additional Requirements",
+              "description": "Describe any special requirements",
+              "type": "string",
+              "default": "Standard configuration with automated backups enabled"
+            }
+          },
+          "required": ["infrastructure_type", "environment", "service"],
+          "order": [
+            "infrastructure_type",
+            "cloud_resource_type",
+            "onprem_resource_type",
+            "environment",
+            "service",
+            "additional_context"
+          ]
+        },
+        "actionCardButtonText": "Submit",
+        "executeActionButtonText": "Submit Request",
+        "published": true
+      },
+      "variables": {}
+    },
+    {
+      "identifier": "fetch_service_context",
+      "title": "Fetch Service Context",
+      "icon": "Port",
+      "config": {
+        "type": "WEBHOOK",
+        "url": "https://api.getport.io/v1/blueprints/service/entities/{{ .outputs[\"trigger\"].service }}",
+        "agent": false,
+        "synchronized": true,
+        "method": "GET",
+        "onTimeout": "fail",
+        "onFailure": "terminate"
+      },
+      "variables": {
+        "request_id": "{{ .outputs[\"trigger\"].environment | ascii_downcase }}-{{ .outputs[\"trigger\"].service }}-{{ (if .outputs[\"trigger\"].infrastructure_type == \"Cloud\" then .outputs[\"trigger\"].cloud_resource_type else .outputs[\"trigger\"].onprem_resource_type end) | gsub(\" \"; \"-\") | ascii_downcase }}",
+        "resource_id": "{{ .outputs[\"trigger\"].environment | ascii_downcase }}-{{ .outputs[\"trigger\"].service }}-{{ (if .outputs[\"trigger\"].infrastructure_type == \"Cloud\" then .outputs[\"trigger\"].cloud_resource_type else .outputs[\"trigger\"].onprem_resource_type end) | gsub(\" \"; \"-\") | ascii_downcase }}-resource",
+        "service_tier": "{{ .result.response.data.entity.properties.tier }}",
+        "resource_type": "{{ if .outputs[\"trigger\"].infrastructure_type == \"Cloud\" then .outputs[\"trigger\"].cloud_resource_type else .outputs[\"trigger\"].onprem_resource_type end }}",
+        "service_title": "{{ .result.response.data.entity.title }}"
+      }
+    },
+    {
+      "identifier": "human_gate_before_plan",
+      "title": "Confirm AI plan generation (HITL preview)",
+      "icon": "UserCheck",
+      "config": {
+        "type": "INPUT",
+        "userInputs": {
+          "properties": {
+            "reviewer_notes": {
+              "title": "Notes for approvers (optional)",
+              "description": "Optional context recorded with this decision.",
+              "type": "string",
+              "default": ""
+            }
+          },
+          "buttons": [
+            {
+              "identifier": "proceed",
+              "label": "Proceed with AI plan",
+              "variant": "PRIMARY"
+            },
+            {
+              "identifier": "stop",
+              "label": "Stop run",
+              "variant": "DANGER"
+            }
+          ]
+        },
+        "outlets": [
+          {
+            "evaluationMethod": "button",
+            "identifier": "proceed",
+            "title": "Proceed",
+            "numOfResponders": 1
+          },
+          {
+            "evaluationMethod": "button",
+            "identifier": "stop",
+            "title": "Stopped",
+            "numOfResponders": 1
+          }
+        ]
+      },
+      "variables": {}
+    },
+    {
+      "identifier": "slack_hitl_gate_stopped",
+      "title": "Slack — Run stopped at review gate",
+      "icon": "Slack",
+      "config": {
+        "type": "WEBHOOK",
+        "url": "https://slack.com/api/chat.postMessage",
+        "agent": false,
+        "synchronized": true,
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer {{ .secrets.SLACK_BOT_TOKEN }}"
+        },
+        "body": {
+          "channel": "{{ .secrets.SLACK_PLATFORM_CHANNEL }}",
+          "text": "Resource request — stopped before AI plan (human gate)",
+          "blocks": [
+            {
+              "type": "section",
+              "text": {
+                "type": "mrkdwn",
+                "text": "*Resource request stopped at human gate*\nSomeone chose *Stop run* before AI plan generation.\n*Service:* {{ .outputs[\"fetch_service_context\"].service_title }}\n*Notes:* {{ .outputs[\"human_gate_before_plan\"].reviewer_notes }}"
+              }
+            }
+          ]
+        },
+        "onTimeout": "fail",
+        "onFailure": "continue"
+      },
+      "variables": {}
+    },
+    {
+      "identifier": "condition_infrastructure",
+      "title": "Cloud or On-Premise?",
+      "icon": "Checklist",
+      "config": {
+        "type": "CONDITION",
+        "outlets": [
+          {
+            "identifier": "cloud",
+            "title": "Cloud",
+            "expression": ".outputs[\"trigger\"].infrastructure_type == \"Cloud\""
+          },
+          {
+            "identifier": "on_premise",
+            "title": "On-Premise",
+            "expression": ".outputs[\"trigger\"].infrastructure_type == \"On-Premise\""
+          }
+        ]
+      },
+      "variables": {}
+    },
+    {
+      "identifier": "ai_generate_plan_cloud",
+      "title": "Generate Cloud Implementation Plan",
+      "icon": "AI",
+      "config": {
+        "type": "AI",
+        "userPrompt": "Generate an implementation plan for provisioning a cloud resource.\n\nRequest Details:\n- Resource Type: {{ .outputs[\"trigger\"].cloud_resource_type }}\n- Environment: {{ .outputs[\"trigger\"].environment }}\n- Service: {{ .outputs[\"fetch_service_context\"].service_title }}\n- Service Tier: {{ .outputs[\"fetch_service_context\"].service_tier }}\n- Additional Requirements: {{ .outputs[\"trigger\"].additional_context }}\n\nSearch GitHub for existing Terraform modules that match this resource type before writing the plan.\n\nGenerate:\n1. **Implementation Plan** - Step-by-step Terraform plan referencing any existing modules found\n2. **Architecture Diagram** - A SIMPLE Mermaid flowchart with MAXIMUM 5-7 nodes showing:\n   - VPC/Environment container\n   - Application service\n   - The new resource\n   - Monitoring\n\n```mermaid\nflowchart TB\n    subgraph VPC[\"Environment VPC\"]\n        subgraph App[\"Application Tier\"]\n            Service[Service Name]\n        end\n        Service -->|connects| DB[(Database)]\n    end\n    subgraph Monitoring\n        Logs[CloudWatch]\n    end\n    DB --> Logs\n```\n\nKeep it simple. NO security groups, NO IAM, NO KMS in the diagram.",
+        "systemPrompt": "You are an infrastructure architect at PlatformCon-Carne. Generate clear, actionable implementation plans for AWS resources using Terraform. Be concise. Gold-tier services get production-grade sizing (Multi-AZ, larger instances). Silver gets standard. Bronze gets minimal.",
+        "tools": ["git_hub_search_code", "git_hub_get_file_content", "notion_search_notion"],
+        "mcpServers": [
+          {"identifier": "git_hub"},
+          {"identifier": "notion"}
+        ],
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "architecture": {"type": "string"},
+            "implementation_plan": {"type": "string"}
+          },
+          "required": ["implementation_plan", "architecture"]
+        }
+      },
+      "variables": {
+        "architecture": "{{ .result.response | fromjson | .architecture }}",
+        "implementation_plan": "{{ .result.response | fromjson | .implementation_plan }}"
+      }
+    },
+    {
+      "identifier": "ai_generate_plan_onprem",
+      "title": "Generate On-Premise Implementation Plan",
+      "icon": "AI",
+      "config": {
+        "type": "AI",
+        "userPrompt": "Generate an implementation plan for provisioning an on-premise resource.\n\nRequest Details:\n- Resource Type: {{ .outputs[\"trigger\"].onprem_resource_type }}\n- Environment: {{ .outputs[\"trigger\"].environment }}\n- Service: {{ .outputs[\"fetch_service_context\"].service_title }}\n- Additional Requirements: {{ .outputs[\"trigger\"].additional_context }}\n\nGenerate:\n1. **Implementation Plan** - Step-by-step VMware vSphere provisioning plan\n2. **Architecture Diagram** - A SIMPLE Mermaid flowchart with MAXIMUM 5-7 nodes.",
+        "systemPrompt": "You are an infrastructure architect at PlatformCon-Carne. Generate clear, actionable plans for on-premise VMware resources. Be concise.",
+        "tools": ["git_hub_search_code", "notion_search_notion"],
+        "mcpServers": [
+          {"identifier": "git_hub"},
+          {"identifier": "notion"}
+        ],
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "architecture": {"type": "string"},
+            "implementation_plan": {"type": "string"}
+          },
+          "required": ["implementation_plan", "architecture"]
+        }
+      },
+      "variables": {
+        "architecture": "{{ .result.response | fromjson | .architecture }}",
+        "implementation_plan": "{{ .result.response | fromjson | .implementation_plan }}"
+      }
+    },
+    {
+      "identifier": "create_request",
+      "title": "Create Resource Request",
+      "icon": "NewPage",
+      "config": {
+        "type": "UPSERT_ENTITY",
+        "blueprintIdentifier": "cloud_resource_request",
+        "mapping": {
+          "identifier": "{{ .outputs[\"fetch_service_context\"].request_id }}",
+          "title": "{{ .outputs[\"fetch_service_context\"].resource_type }} for {{ .outputs[\"fetch_service_context\"].service_title }}",
+          "properties": {
+            "status": "{{ if .outputs[\"trigger\"].environment == \"Production\" then \"Pending Approval\" else \"Approved\" end }}",
+            "environment": "{{ .outputs[\"trigger\"].environment }}",
+            "resource_type": "{{ .outputs[\"fetch_service_context\"].resource_type }}",
+            "infrastructure_type": "{{ .outputs[\"trigger\"].infrastructure_type }}",
+            "additional_context": "{{ .outputs[\"trigger\"].additional_context }}",
+            "requested_at": "{{ now | todateiso8601 }}",
+            "architecture": "{{ if .outputs[\"ai_generate_plan_cloud\"].architecture != null then .outputs[\"ai_generate_plan_cloud\"].architecture else .outputs[\"ai_generate_plan_onprem\"].architecture end }}",
+            "implementation_plan": "{{ if .outputs[\"ai_generate_plan_cloud\"].implementation_plan != null then .outputs[\"ai_generate_plan_cloud\"].implementation_plan else .outputs[\"ai_generate_plan_onprem\"].implementation_plan end }}"
+          },
+          "relations": {
+            "requested_by_service": "{{ .outputs[\"trigger\"].service }}"
+          }
+        },
+        "onFailure": "terminate"
+      },
+      "variables": {}
+    },
+    {
+      "identifier": "condition_environment",
+      "title": "Production?",
+      "icon": "Branch",
+      "config": {
+        "type": "CONDITION",
+        "outlets": [
+          {
+            "identifier": "production",
+            "title": "Production",
+            "expression": ".outputs[\"trigger\"].environment == \"Production\""
+          },
+          {
+            "identifier": "non_production",
+            "title": "Non-Production",
+            "expression": ".outputs[\"trigger\"].environment != \"Production\""
+          }
+        ]
+      },
+      "variables": {}
+    },
+    {
+      "identifier": "slack_approval_request",
+      "title": "Send Approval Request",
+      "icon": "Slack",
+      "config": {
+        "type": "WEBHOOK",
+        "url": "https://slack.com/api/chat.postMessage",
+        "agent": false,
+        "synchronized": true,
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer {{ .secrets.SLACK_BOT_TOKEN }}"
+        },
+        "body": {
+          "channel": "{{ .secrets.SLACK_PLATFORM_CHANNEL }}",
+          "text": "Production Resource Request — Approval Required",
+          "blocks": [
+            {
+              "type": "header",
+              "text": {
+                "type": "plain_text",
+                "text": "🔴 Production Resource Request — Approval Required"
+              }
+            },
+            {
+              "type": "section",
+              "fields": [
+                {
+                  "type": "mrkdwn",
+                  "text": "*Service:*\n{{ .outputs[\"fetch_service_context\"].service_title }}"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": "*Resource:*\n{{ .outputs[\"fetch_service_context\"].resource_type }}"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": "*Environment:*\nProduction"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": "*Tier:*\n{{ .outputs[\"fetch_service_context\"].service_tier }}"
+                }
+              ]
+            },
+            {
+              "type": "divider"
+            },
+            {
+              "type": "actions",
+              "elements": [
+                {
+                  "type": "button",
+                  "text": {"type": "plain_text", "text": "View Request & Approve"},
+                  "style": "primary",
+                  "url": "https://app.getport.io/cloud_resource_requestEntity?identifier={{ .outputs[\"fetch_service_context\"].request_id }}"
+                },
+                {
+                  "type": "button",
+                  "text": {"type": "plain_text", "text": "Implementation Plan"},
+                  "url": "https://app.getport.io/cloud_resource_requestEntity?identifier={{ .outputs[\"fetch_service_context\"].request_id }}&activeTab=1"
+                }
+              ]
+            }
+          ]
+        },
+        "onTimeout": "fail",
+        "onFailure": "terminate"
+      },
+      "variables": {}
+    },
+    {
+      "identifier": "open_pr_with_coding_agent",
+      "title": "Open Terraform PR",
+      "icon": "Claude",
+      "config": {
+        "type": "UPSERT_ENTITY",
+        "blueprintIdentifier": "cloud_resource_request",
+        "mapping": {
+          "identifier": "{{ .outputs[\"fetch_service_context\"].request_id }}",
+          "properties": {
+            "pr_url": "https://github.com/platformcon-carne/terraform-modules/pull/1",
+            "approved_at": "{{ now | todateiso8601 }}",
+            "approved_by": "Auto-approved (Non-Production)"
+          }
+        },
+        "onFailure": "terminate"
+      },
+      "variables": {}
+    },
+    {
+      "identifier": "update_cloud_resource_in_port",
+      "title": "Create Cloud Resource in Catalog",
+      "icon": "Cloud",
+      "config": {
+        "type": "UPSERT_ENTITY",
+        "blueprintIdentifier": "cloudResource",
+        "mapping": {
+          "identifier": "{{ .outputs[\"fetch_service_context\"].resource_id }}",
+          "title": "{{ .outputs[\"fetch_service_context\"].resource_type }} — {{ .outputs[\"fetch_service_context\"].service_title }}",
+          "properties": {
+            "kind": "{{ .outputs[\"fetch_service_context\"].resource_type }}",
+            "status": "Provisioning",
+            "environment": "{{ .outputs[\"trigger\"].environment }}",
+            "region": "eu-west-1",
+            "link": "https://console.aws.amazon.com/rds/home?region=eu-west-1"
+          },
+          "relations": {
+            "used_by": "{{ .outputs[\"trigger\"].service }}"
+          }
+        },
+        "onFailure": "terminate"
+      },
+      "variables": {}
+    },
+    {
+      "identifier": "link_request_to_resource",
+      "title": "Link Request to Resource",
+      "icon": "Link",
+      "config": {
+        "type": "UPSERT_ENTITY",
+        "blueprintIdentifier": "cloud_resource_request",
+        "mapping": {
+          "identifier": "{{ .outputs[\"fetch_service_context\"].request_id }}",
+          "relations": {
+            "provisioned_resource": "{{ .outputs[\"fetch_service_context\"].resource_id }}"
+          }
+        },
+        "onFailure": "terminate"
+      },
+      "variables": {}
+    },
+    {
+      "identifier": "slack_nonprod_notification",
+      "title": "Notify Slack — Auto-Approved",
+      "icon": "Slack",
+      "config": {
+        "type": "WEBHOOK",
+        "url": "https://slack.com/api/chat.postMessage",
+        "agent": false,
+        "synchronized": true,
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer {{ .secrets.SLACK_BOT_TOKEN }}"
+        },
+        "body": {
+          "channel": "{{ .secrets.SLACK_PLATFORM_CHANNEL }}",
+          "text": "Resource Request — Auto-Approved",
+          "blocks": [
+            {
+              "type": "header",
+              "text": {
+                "type": "plain_text",
+                "text": "{{ if .outputs[\"trigger\"].infrastructure_type == \"Cloud\" then \"☁️\" else \"🏢\" end }} Resource Request — Auto-Approved",
+                "emoji": true
+              }
+            },
+            {
+              "type": "section",
+              "fields": [
+                {
+                  "type": "mrkdwn",
+                  "text": "*Service:*\n{{ .outputs[\"fetch_service_context\"].service_title }}"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": "*Resource:*\n{{ .outputs[\"fetch_service_context\"].resource_type }}"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": "*Environment:*\n{{ .outputs[\"trigger\"].environment }}"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": "*Status:*\nProvisioning 🟡"
+                }
+              ]
+            },
+            {
+              "type": "divider"
+            },
+            {
+              "type": "actions",
+              "elements": [
+                {
+                  "type": "button",
+                  "text": {"type": "plain_text", "text": "View PR"},
+                  "style": "primary",
+                  "url": "https://github.com/platformcon-carne/terraform-modules/pull/1"
+                },
+                {
+                  "type": "button",
+                  "text": {"type": "plain_text", "text": "Implementation Plan"},
+                  "url": "https://app.getport.io/cloud_resource_requestEntity?identifier={{ .outputs[\"fetch_service_context\"].request_id }}&activeTab=1"
+                },
+                {
+                  "type": "button",
+                  "text": {"type": "plain_text", "text": "Architecture"},
+                  "url": "https://app.getport.io/cloud_resource_requestEntity?identifier={{ .outputs[\"fetch_service_context\"].request_id }}&activeTab=2"
+                },
+                {
+                  "type": "button",
+                  "text": {"type": "plain_text", "text": "View Resource"},
+                  "url": "https://app.getport.io/cloudResourceEntity?identifier={{ .outputs[\"fetch_service_context\"].resource_id }}"
+                }
+              ]
+            }
+          ]
+        },
+        "onTimeout": "fail",
+        "onFailure": "continue"
+      },
+      "variables": {}
+    }
+  ],
+  "connections": [
+    {"sourceIdentifier": "trigger", "targetIdentifier": "fetch_service_context"},
+    {"sourceIdentifier": "fetch_service_context", "targetIdentifier": "human_gate_before_plan"},
+    {"sourceIdentifier": "human_gate_before_plan", "targetIdentifier": "condition_infrastructure", "sourceOutletIdentifier": "proceed"},
+    {"sourceIdentifier": "human_gate_before_plan", "targetIdentifier": "slack_hitl_gate_stopped", "sourceOutletIdentifier": "stop"},
+    {"sourceIdentifier": "condition_infrastructure", "targetIdentifier": "ai_generate_plan_cloud", "sourceOutletIdentifier": "cloud"},
+    {"sourceIdentifier": "condition_infrastructure", "targetIdentifier": "ai_generate_plan_onprem", "sourceOutletIdentifier": "on_premise"},
+    {"sourceIdentifier": "ai_generate_plan_cloud", "targetIdentifier": "create_request"},
+    {"sourceIdentifier": "ai_generate_plan_onprem", "targetIdentifier": "create_request"},
+    {"sourceIdentifier": "create_request", "targetIdentifier": "condition_environment"},
+    {"sourceIdentifier": "condition_environment", "targetIdentifier": "slack_approval_request", "sourceOutletIdentifier": "production"},
+    {"sourceIdentifier": "condition_environment", "targetIdentifier": "open_pr_with_coding_agent", "sourceOutletIdentifier": "non_production"},
+    {"sourceIdentifier": "open_pr_with_coding_agent", "targetIdentifier": "update_cloud_resource_in_port"},
+    {"sourceIdentifier": "update_cloud_resource_in_port", "targetIdentifier": "link_request_to_resource"},
+    {"sourceIdentifier": "link_request_to_resource", "targetIdentifier": "slack_nonprod_notification"}
+  ]
+}
+`````

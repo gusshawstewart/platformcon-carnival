@@ -50,3 +50,13 @@ The workflow JSON references **Slack** placeholders (`SLACK_BOT_TOKEN`, `SLACK_P
 ## Primary attendee path
 
 Point the room at **[workshop/README.md](./README.md)** and the **[prompts](./prompts/README.md)** — not Cursor — unless someone explicitly wants the MCP skill.
+
+## Keeping workshop prompts in sync
+
+The files `workshop/prompts/01`–`04` **embed** the same JSON as `step-*` / `sample-data/`. After you change those JSON sources, run from repo root:
+
+```bash
+python3 workshop/scripts/sync-prompt-embeds.py
+```
+
+so attendees’ copy-paste blocks stay accurate.

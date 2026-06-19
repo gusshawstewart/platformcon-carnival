@@ -1,13 +1,21 @@
 # Prompt library (Port AI)
 
-Use these files **in order** during the workshop. For each step:
+Use these files **in order** during the workshop.
 
-1. Open **Port AI** in your Port organization (location varies by Port UI; use whatever chat / copilot surface your org exposes).
-2. Open the matching `.md` file below.
-3. **Copy the entire contents** of that file into Port AI as your message, then follow any extra clicks Port suggests.
-4. Complete the **manual checklist** in Port (Builder, import, etc.) — the prompt tells you which JSON files to use from this repo.
+## For attendees (new Port users)
 
-Repo layout reminder (paths are relative to the **repository root**, one level above this `workshop/` folder):
+Steps **1–4** embed **full JSON** inside the markdown. You can:
+
+- Open this file on **GitHub** (raw or rendered), **select the JSON inside the fenced block**, copy, and paste into Port’s **Import** UI, **or**
+- **Paste the whole `.md` file** into Port AI so the model sees the same JSON and can coach you while you paste into Port.
+
+Step **3** is a large workflow. If Port AI hits a length limit, paste **only** the workflow JSON (between the five-backtick delimiter lines) into **Port’s** import box, and send Port AI the **instruction text** at the top of `03-ai-workflow.md` in a separate, shorter message.
+
+You do **not** need a local Git clone for the copy-paste path—GitHub in the browser is enough.
+
+Step **0** is short text only (no JSON).
+
+## Order
 
 | Step | File |
 |------|------|
@@ -17,4 +25,10 @@ Repo layout reminder (paths are relative to the **repository root**, one level a
 | 3 | [03-ai-workflow.md](./03-ai-workflow.md) |
 | 4 | [04-demo-verification.md](./04-demo-verification.md) |
 
-If Port AI cannot apply changes automatically, the prompts still work as a **script**: do the UI steps yourself using the same file list.
+## For maintainers
+
+After editing JSON under `step-*` or `sample-data/`, regenerate embedded prompts from the repo root:
+
+```bash
+python3 workshop/scripts/sync-prompt-embeds.py
+```

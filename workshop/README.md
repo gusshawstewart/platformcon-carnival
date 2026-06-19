@@ -5,8 +5,10 @@ Use this folder for **PlatformCon–style working sessions** where attendees may
 ## Start here
 
 1. **Log in** to the Port organization your facilitator assigned (see [FACILITATOR.md](./FACILITATOR.md) if you are running the session).
-2. **Clone or download** this repository so you have the JSON files locally (or open the repo on GitHub and use **Raw** file links when importing in Port).
-3. Open the **[prompt library](./prompts/README.md)** and follow steps **0 → 4** in order. Each file is a **copy-paste prompt** you can drop into **Port AI** while you work in Builder, Self-Service, or Workflows.
+2. Open the **[prompt library](./prompts/README.md)** on **GitHub** (or clone this repo if you prefer). Steps **1–4** include **ready-to-copy JSON** in the page—paste it into Port’s import dialogs; you do not need to hunt separate files.
+3. For each step, optionally **paste the whole prompt file** into **Port AI** so it can guide you while you use Builder / Self-Service / Workflows.
+
+**Port AI only sees what you paste into chat.** The prompt files carry the **payloads** so new users are not expected to upload loose JSON from disk.
 
 You do **not** need Cursor or the Port MCP to complete the workshop using this path.
 

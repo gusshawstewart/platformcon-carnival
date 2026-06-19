@@ -1,5 +1,7 @@
 You are helping me configure my Port organization for a workshop called **PlatformCon-Carne** (fictional food-delivery platform team).
 
+**Note:** You only see this chat—I will perform any changes in the Port UI myself.
+
 **Goal:** Set the portal / organization display title to **`PlatformCon-Carne Platform`**.
 
 **What I will do in the Port UI (please confirm the exact menu names for my Port version if they differ):**

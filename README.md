@@ -9,7 +9,7 @@
 **You do not need Cursor.** Use the workshop path:
 
 - **[workshop/README.md](./workshop/README.md)** — start here  
-- **[workshop/prompts/](./workshop/prompts/)** — copy-paste prompts for **Port AI** while you import JSON from this repo  
+- **[workshop/prompts/](./workshop/prompts/)** — prompts for **Port AI** with **embedded JSON** (GitHub in a browser is enough; no local clone required for copy-paste)  
 - Facilitators: **[workshop/FACILITATOR.md](./workshop/FACILITATOR.md)** — pre-provisioned Portals, seating, beta / onboarding notes  
 
 Pre-provisioned Port organizations and credentials are **outside this repo** (you maintain those separately).
