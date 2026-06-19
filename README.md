@@ -10,7 +10,6 @@ Start here:
 
 - **[workshop/README.md](./workshop/README.md)** — how to run the session in the browser  
 - **[workshop/prompts/](./workshop/prompts/)** — copy-paste prompts with **embedded JSON** for Port (GitHub in a browser is enough)  
-- **Facilitators:** [workshop/FACILITATOR.md](./workshop/FACILITATOR.md) — pre-provisioned Portals, seating, beta / onboarding  
 
 Pre-provisioned Port organizations and credentials are **outside this repo** (you maintain those separately).
 
@@ -91,6 +90,8 @@ No visibility  →  Catalog  →  Self-Service Action  →  AI Workflow  →  De
 - [AI Agents in Port](https://docs.getport.io/ai-interfaces/ai-agents/overview)
 - [Port Free Tier](https://app.getport.io/signup)
 
+### Facilitators:
+- **Facilitators:** [workshop/FACILITATOR.md](./workshop/FACILITATOR.md) — pre-provisioned Portals, seating, beta / onboarding  
 ---
 
 ### Optional: Cursor + Port MCP
