@@ -4,12 +4,15 @@ description: >-
   Set up the PlatformCon-Carne self-service cloud resource provisioning platform
   in Port via MCP. Use when the user asks to set up, build, or configure the
   workshop, PlatformCon-Carne platform, cloud resource catalog, self-service
-  action, or AI workflow.
+  action, or AI workflow. For live sessions without Cursor, prefer the repo’s
+  workshop/ path and prompt library over this skill.
 ---
 
 # PlatformCon-Carne Workshop
 
 Build a self-service cloud resource platform in Port: catalog → form → AI workflow → demo.
+
+**Live sessions (no Cursor):** point attendees to [workshop/README.md](../../../workshop/README.md), [workshop/prompts/](../../../workshop/prompts/), and facilitators to [workshop/FACILITATOR.md](../../../workshop/FACILITATOR.md). This skill is the **MCP automation path** for Cursor users.
 
 ## Prerequisites
 

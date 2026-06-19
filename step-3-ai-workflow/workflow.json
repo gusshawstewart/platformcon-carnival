@@ -103,6 +103,83 @@
       }
     },
     {
+      "identifier": "human_gate_before_plan",
+      "title": "Confirm AI plan generation (HITL preview)",
+      "icon": "UserCheck",
+      "config": {
+        "type": "INPUT",
+        "userInputs": {
+          "properties": {
+            "reviewer_notes": {
+              "title": "Notes for approvers (optional)",
+              "description": "Optional context recorded with this decision.",
+              "type": "string",
+              "default": ""
+            }
+          },
+          "buttons": [
+            {
+              "identifier": "proceed",
+              "label": "Proceed with AI plan",
+              "variant": "PRIMARY"
+            },
+            {
+              "identifier": "stop",
+              "label": "Stop run",
+              "variant": "DANGER"
+            }
+          ]
+        },
+        "outlets": [
+          {
+            "evaluationMethod": "button",
+            "identifier": "proceed",
+            "title": "Proceed",
+            "numOfResponders": 1
+          },
+          {
+            "evaluationMethod": "button",
+            "identifier": "stop",
+            "title": "Stopped",
+            "numOfResponders": 1
+          }
+        ]
+      },
+      "variables": {}
+    },
+    {
+      "identifier": "slack_hitl_gate_stopped",
+      "title": "Slack — Run stopped at review gate",
+      "icon": "Slack",
+      "config": {
+        "type": "WEBHOOK",
+        "url": "https://slack.com/api/chat.postMessage",
+        "agent": false,
+        "synchronized": true,
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer {{ .secrets.SLACK_BOT_TOKEN }}"
+        },
+        "body": {
+          "channel": "{{ .secrets.SLACK_PLATFORM_CHANNEL }}",
+          "text": "Resource request — stopped before AI plan (human gate)",
+          "blocks": [
+            {
+              "type": "section",
+              "text": {
+                "type": "mrkdwn",
+                "text": "*Resource request stopped at human gate*\nSomeone chose *Stop run* before AI plan generation.\n*Service:* {{ .outputs[\"fetch_service_context\"].service_title }}\n*Notes:* {{ .outputs[\"human_gate_before_plan\"].reviewer_notes }}"
+              }
+            }
+          ]
+        },
+        "onTimeout": "fail",
+        "onFailure": "continue"
+      },
+      "variables": {}
+    },
+    {
       "identifier": "condition_infrastructure",
       "title": "Cloud or On-Premise?",
       "icon": "Checklist",
@@ -445,7 +522,9 @@
   ],
   "connections": [
     {"sourceIdentifier": "trigger", "targetIdentifier": "fetch_service_context"},
-    {"sourceIdentifier": "fetch_service_context", "targetIdentifier": "condition_infrastructure"},
+    {"sourceIdentifier": "fetch_service_context", "targetIdentifier": "human_gate_before_plan"},
+    {"sourceIdentifier": "human_gate_before_plan", "targetIdentifier": "condition_infrastructure", "sourceOutletIdentifier": "proceed"},
+    {"sourceIdentifier": "human_gate_before_plan", "targetIdentifier": "slack_hitl_gate_stopped", "sourceOutletIdentifier": "stop"},
     {"sourceIdentifier": "condition_infrastructure", "targetIdentifier": "ai_generate_plan_cloud", "sourceOutletIdentifier": "cloud"},
     {"sourceIdentifier": "condition_infrastructure", "targetIdentifier": "ai_generate_plan_onprem", "sourceOutletIdentifier": "on_premise"},
     {"sourceIdentifier": "ai_generate_plan_cloud", "targetIdentifier": "create_request"},

@@ -1,6 +1,18 @@
 # From IDP to AEP: Building an AI-Enhanced Platform
 
-**PlatformCon Workshop** · 1 hour · Port + Cursor
+**PlatformCon Workshop** · ~1 hour · Port (primary) · optional Cursor for facilitators
+
+---
+
+## Live session (most attendees)
+
+**You do not need Cursor.** Use the workshop path:
+
+- **[workshop/README.md](./workshop/README.md)** — start here  
+- **[workshop/prompts/](./workshop/prompts/)** — copy-paste prompts for **Port AI** while you import JSON from this repo  
+- Facilitators: **[workshop/FACILITATOR.md](./workshop/FACILITATOR.md)** — pre-provisioned Portals, seating, beta / onboarding notes  
+
+Pre-provisioned Port organizations and credentials are **outside this repo** (you maintain those separately).
 
 ---
 
@@ -33,19 +45,23 @@ See [company-context.md](./company-context.md) for the full backstory.
 
 ---
 
-## How to Set This Up
+## How to set this up
 
-**You need:**
-- A [Port account](https://app.getport.io/signup) (free tier works)
-- [Cursor](https://cursor.sh) with MCP support
+### Path A — Workshop / live session (recommended)
 
-**Setup:**
-1. Clone this repo:
+1. Use the **Port organization** your facilitator assigned (see [workshop/FACILITATOR.md](./workshop/FACILITATOR.md)).
+2. Clone or download this repo so you have the JSON files locally:
+```bash
+git clone https://github.com/YOUR_ORG/platformcon-carne.git
+cd platformcon-carne
 ```
-git clone https://github.com/YOUR_ORG/platformcon-carne-workshop
-cd platformcon-carne-workshop
-```
+3. Follow **[workshop/README.md](./workshop/README.md)** and the numbered prompts under **[workshop/prompts/](./workshop/prompts/)**.
 
+### Path B — Cursor + Port MCP (optional)
+
+For facilitators or attendees who already use **Cursor** with MCP:
+
+1. Clone this repo (same as above).
 2. Configure the Port MCP in `~/.cursor/mcp.json`:
 ```json
 {
@@ -58,12 +74,12 @@ cd platformcon-carne-workshop
 ```
 > EU region: use `https://mcp.port-eu.io/v1` — check at https://app.getport.io/settings/credentials
 
-3. Restart Cursor and authenticate when prompted
+3. Restart Cursor and authenticate when prompted.
 
-4. Open this repo in Cursor, open the AI chat, and say:
+4. Open this repo in Cursor, open the AI chat, and say:  
    **"Set up the PlatformCon-Carne cloud resource provisioning platform"**
 
-The skill at `.cursor/skills/platformcon-workshop/SKILL.md` guides the agent through each step.
+The agent skill at [`.cursor/skills/platformcon-workshop/SKILL.md`](./.cursor/skills/platformcon-workshop/SKILL.md) runs the same steps as the workshop prompts.
 
 ---
 
@@ -98,6 +114,7 @@ No visibility  →  Catalog  →  Self-Service Action  →  AI Workflow  →  De
 
 ## Resources
 
+- [Workshop path (attendees)](./workshop/README.md) · [Facilitator notes](./workshop/FACILITATOR.md) · [Prompt library](./workshop/prompts/)
 - [Port Documentation](https://docs.getport.io)
 - [Port MCP Setup](https://docs.getport.io/guides-and-tutorials/setup-port-mcp)
 - [AI Agents in Port](https://docs.getport.io/ai-interfaces/ai-agents/overview)
