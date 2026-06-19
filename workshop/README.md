@@ -10,7 +10,6 @@ Use this folder for **PlatformCon–style working sessions**. Everything here is
 
 **Port AI only sees what you paste into chat.** The prompt files carry the **payloads** so new users are not expected to hunt for loose JSON elsewhere.
 
-**Maintainers / facilitators:** If you edit the **source** JSON that feeds the prompts, it lives under **[`.cursor/skills/platformcon-workshop/assets/`](../.cursor/skills/platformcon-workshop/assets/)**; then run **`python3 workshop/scripts/sync-prompt-embeds.py`** from the repo root (see [FACILITATOR.md](./FACILITATOR.md)).
 
 ## What you will build
 
