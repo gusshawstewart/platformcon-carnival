@@ -1,4 +1,4 @@
-# Workshop (live session path)
+# Workshop
 
 Use this folder for **PlatformCon–style working sessions**. Everything here is **browser + Port** (and optionally Port’s in-product AI). The **[prompt library](./prompts/)** embeds the JSON you paste into Port—**attendees do not need to open any other folder** in this repo.
 
