@@ -99,7 +99,7 @@ Create **six** entities on blueprint `service`. If Port has **bulk import / JSON
 - **INPUT node** `human_gate_before_plan`: after service context loads, someone chooses **Yes — generate draft plan with AI** or **No — cancel run** before any AI step runs. That authorizes **running the AI to draft a plan**, not approving the final infrastructure change.
 - **AI nodes** use `tools: []` and **no `mcpServers`** so the workshop does not require GitHub or Notion MCP server entities in Port.
 - **Slack** nodes need secrets `SLACK_BOT_TOKEN` and `SLACK_PLATFORM_CHANNEL` to succeed; other steps may still run.
-- Webhooks use `api.getport.io`; EU tenants may need URL updates per facilitator.
+- The fetch-service webhook uses **`https://api.port.io`** for the Port API. Slack deep links still use `app.getport.io`; change if your tenant uses a different app host.
 
 **After import:** Tell me where to open the **run timeline** and what **waiting for input** looks like for the INPUT step.
 

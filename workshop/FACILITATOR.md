@@ -53,10 +53,8 @@ Point the room at **[workshop/README.md](./README.md)** and the **[prompts](./pr
 
 ## Keeping workshop prompts in sync
 
-The files `workshop/prompts/01`–`04` **embed** the same JSON as `step-*` / `sample-data/`. After you change those JSON sources, run from repo root:
+The files `workshop/prompts/01`–`04` **embed** the same JSON as `step-*` / `sample-data/`. From repo root:
 
-```bash
-python3 workshop/scripts/sync-prompt-embeds.py
-```
+1. After you edit JSON under `step-*` / `sample-data/`, run **`python3 workshop/scripts/sync-prompt-embeds.py`** so the prompt files pick up the changes.
 
-so attendees’ copy-paste blocks stay accurate.
+2. To align `step-3-ai-workflow/workflow.json` with a typical **Port UI export** (null trigger titles, `api.port.io` on the catalog fetch, `category`, `links` / `verbose` on nodes, Slack `body` key order, `slack_hitl_gate_stopped` after `open_pr`, etc.), run **`python3 workshop/scripts/apply_port_export_shape.py`**, then run **`sync-prompt-embeds.py`** again.

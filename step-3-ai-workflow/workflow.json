@@ -3,25 +3,43 @@
   "title": "Create a new resource",
   "icon": "Server",
   "description": "Request a new cloud or on-premise resource with AI-generated implementation plan",
+  "category": null,
   "allowAnyoneToViewRuns": true,
   "nodes": [
     {
       "identifier": "trigger",
-      "title": "Request Cloud Resource",
-      "icon": "Cloud",
+      "title": null,
+      "icon": null,
       "config": {
         "type": "SELF_SERVE_TRIGGER",
         "userInputs": {
           "properties": {
-            "infrastructure_type": {
-              "title": "Infrastructure",
+            "service": {
+              "title": "Service",
               "type": "string",
-              "default": "Cloud",
-              "enum": ["Cloud", "On-Premise"],
+              "format": "entity",
+              "blueprint": "service"
+            },
+            "environment": {
+              "title": "Environment",
+              "type": "string",
+              "default": "Staging",
+              "enum": [
+                "Development",
+                "Staging",
+                "Production"
+              ],
               "enumColors": {
-                "Cloud": "turquoise",
-                "On-Premise": "purple"
+                "Development": "green",
+                "Staging": "yellow",
+                "Production": "red"
               }
+            },
+            "additional_context": {
+              "title": "Additional Requirements",
+              "description": "Describe any special requirements",
+              "type": "string",
+              "default": "Standard configuration with automated backups enabled"
             },
             "cloud_resource_type": {
               "title": "Resource Type",
@@ -30,7 +48,26 @@
               "visible": {
                 "jqQuery": ".form.infrastructure_type == \"Cloud\""
               },
-              "enum": ["RDS Database", "S3 Bucket", "EC2 Instance", "EKS Cluster", "ElastiCache"]
+              "enum": [
+                "RDS Database",
+                "S3 Bucket",
+                "EC2 Instance",
+                "EKS Cluster",
+                "ElastiCache"
+              ]
+            },
+            "infrastructure_type": {
+              "title": "Infrastructure",
+              "type": "string",
+              "default": "Cloud",
+              "enum": [
+                "Cloud",
+                "On-Premise"
+              ],
+              "enumColors": {
+                "Cloud": "turquoise",
+                "On-Premise": "purple"
+              }
             },
             "onprem_resource_type": {
               "title": "Resource Type",
@@ -39,33 +76,18 @@
               "visible": {
                 "jqQuery": ".form.infrastructure_type == \"On-Premise\""
               },
-              "enum": ["Virtual Machine", "Virtual Disk", "Kubernetes Namespace"]
-            },
-            "environment": {
-              "title": "Environment",
-              "type": "string",
-              "default": "Staging",
-              "enum": ["Development", "Staging", "Production"],
-              "enumColors": {
-                "Development": "green",
-                "Staging": "yellow",
-                "Production": "red"
-              }
-            },
-            "service": {
-              "title": "Service",
-              "type": "string",
-              "format": "entity",
-              "blueprint": "service"
-            },
-            "additional_context": {
-              "title": "Additional Requirements",
-              "description": "Describe any special requirements",
-              "type": "string",
-              "default": "Standard configuration with automated backups enabled"
+              "enum": [
+                "Virtual Machine",
+                "Virtual Disk",
+                "Kubernetes Namespace"
+              ]
             }
           },
-          "required": ["infrastructure_type", "environment", "service"],
+          "required": [
+            "infrastructure_type",
+            "environment",
+            "service"
+          ],
           "order": [
             "infrastructure_type",
             "cloud_resource_type",
@@ -79,7 +101,10 @@
         "executeActionButtonText": "Submit Request",
         "published": true
       },
-      "variables": {}
+      "variables": {},
+      "description": null,
+      "links": [],
+      "verbose": false
     },
     {
       "identifier": "fetch_service_context",
@@ -87,7 +112,7 @@
       "icon": "Port",
       "config": {
         "type": "WEBHOOK",
-        "url": "https://api.getport.io/v1/blueprints/service/entities/{{ .outputs[\"trigger\"].service }}",
+        "url": "https://api.port.io/v1/blueprints/service/entities/{{ .outputs[\"trigger\"].service }}",
         "agent": false,
         "synchronized": true,
         "method": "GET",
@@ -100,7 +125,10 @@
         "service_tier": "{{ .result.response.data.entity.properties.tier }}",
         "resource_type": "{{ if .outputs[\"trigger\"].infrastructure_type == \"Cloud\" then .outputs[\"trigger\"].cloud_resource_type else .outputs[\"trigger\"].onprem_resource_type end }}",
         "service_title": "{{ .result.response.data.entity.title }}"
-      }
+      },
+      "description": null,
+      "links": [],
+      "verbose": false
     },
     {
       "identifier": "human_gate_before_plan",
@@ -120,12 +148,12 @@
           "buttons": [
             {
               "identifier": "proceed",
-              "label": "Yes — generate draft plan with AI",
+              "label": "Yes \u2014 generate draft plan with AI",
               "variant": "PRIMARY"
             },
             {
               "identifier": "stop",
-              "label": "No — cancel run",
+              "label": "No \u2014 cancel run",
               "variant": "DANGER"
             }
           ]
@@ -145,39 +173,10 @@
           }
         ]
       },
-      "variables": {}
-    },
-    {
-      "identifier": "slack_hitl_gate_stopped",
-      "title": "Slack — Run stopped at review gate",
-      "icon": "Slack",
-      "config": {
-        "type": "WEBHOOK",
-        "url": "https://slack.com/api/chat.postMessage",
-        "agent": false,
-        "synchronized": true,
-        "method": "POST",
-        "headers": {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer {{ .secrets.SLACK_BOT_TOKEN }}"
-        },
-        "body": {
-          "channel": "{{ .secrets.SLACK_PLATFORM_CHANNEL }}",
-          "text": "Resource request — stopped before AI plan (human gate)",
-          "blocks": [
-            {
-              "type": "section",
-              "text": {
-                "type": "mrkdwn",
-                "text": "*Resource request cancelled before AI*\nSomeone chose *No — cancel run* (AI draft was not authorized).\n*Service:* {{ .outputs[\"fetch_service_context\"].service_title }}\n*Notes:* {{ .outputs[\"human_gate_before_plan\"].reviewer_notes }}"
-              }
-            }
-          ]
-        },
-        "onTimeout": "fail",
-        "onFailure": "continue"
-      },
-      "variables": {}
+      "variables": {},
+      "description": null,
+      "links": [],
+      "verbose": false
     },
     {
       "identifier": "condition_infrastructure",
@@ -198,7 +197,10 @@
           }
         ]
       },
-      "variables": {}
+      "variables": {},
+      "description": null,
+      "links": [],
+      "verbose": false
     },
     {
       "identifier": "ai_generate_plan_cloud",
@@ -212,16 +214,26 @@
         "outputSchema": {
           "type": "object",
           "properties": {
-            "architecture": {"type": "string"},
-            "implementation_plan": {"type": "string"}
+            "architecture": {
+              "type": "string"
+            },
+            "implementation_plan": {
+              "type": "string"
+            }
           },
-          "required": ["implementation_plan", "architecture"]
+          "required": [
+            "implementation_plan",
+            "architecture"
+          ]
         }
       },
       "variables": {
         "architecture": "{{ .result.response | fromjson | .architecture }}",
         "implementation_plan": "{{ .result.response | fromjson | .implementation_plan }}"
-      }
+      },
+      "description": null,
+      "links": [],
+      "verbose": false
     },
     {
       "identifier": "ai_generate_plan_onprem",
@@ -235,16 +247,26 @@
         "outputSchema": {
           "type": "object",
           "properties": {
-            "architecture": {"type": "string"},
-            "implementation_plan": {"type": "string"}
+            "architecture": {
+              "type": "string"
+            },
+            "implementation_plan": {
+              "type": "string"
+            }
           },
-          "required": ["implementation_plan", "architecture"]
+          "required": [
+            "implementation_plan",
+            "architecture"
+          ]
         }
       },
       "variables": {
         "architecture": "{{ .result.response | fromjson | .architecture }}",
         "implementation_plan": "{{ .result.response | fromjson | .implementation_plan }}"
-      }
+      },
+      "description": null,
+      "links": [],
+      "verbose": false
     },
     {
       "identifier": "create_request",
@@ -259,12 +281,12 @@
           "properties": {
             "status": "{{ if .outputs[\"trigger\"].environment == \"Production\" then \"Pending Approval\" else \"Approved\" end }}",
             "environment": "{{ .outputs[\"trigger\"].environment }}",
-            "resource_type": "{{ .outputs[\"fetch_service_context\"].resource_type }}",
-            "infrastructure_type": "{{ .outputs[\"trigger\"].infrastructure_type }}",
-            "additional_context": "{{ .outputs[\"trigger\"].additional_context }}",
-            "requested_at": "{{ now | todateiso8601 }}",
             "architecture": "{{ if .outputs[\"ai_generate_plan_cloud\"].architecture != null then .outputs[\"ai_generate_plan_cloud\"].architecture else .outputs[\"ai_generate_plan_onprem\"].architecture end }}",
-            "implementation_plan": "{{ if .outputs[\"ai_generate_plan_cloud\"].implementation_plan != null then .outputs[\"ai_generate_plan_cloud\"].implementation_plan else .outputs[\"ai_generate_plan_onprem\"].implementation_plan end }}"
+            "requested_at": "{{ now | todateiso8601 }}",
+            "resource_type": "{{ .outputs[\"fetch_service_context\"].resource_type }}",
+            "additional_context": "{{ .outputs[\"trigger\"].additional_context }}",
+            "implementation_plan": "{{ if .outputs[\"ai_generate_plan_cloud\"].implementation_plan != null then .outputs[\"ai_generate_plan_cloud\"].implementation_plan else .outputs[\"ai_generate_plan_onprem\"].implementation_plan end }}",
+            "infrastructure_type": "{{ .outputs[\"trigger\"].infrastructure_type }}"
           },
           "relations": {
             "requested_by_service": "{{ .outputs[\"trigger\"].service }}"
@@ -272,7 +294,10 @@
         },
         "onFailure": "terminate"
       },
-      "variables": {}
+      "variables": {},
+      "description": null,
+      "links": [],
+      "verbose": false
     },
     {
       "identifier": "condition_environment",
@@ -293,7 +318,10 @@
           }
         ]
       },
-      "variables": {}
+      "variables": {},
+      "description": null,
+      "links": [],
+      "verbose": false
     },
     {
       "identifier": "slack_approval_request",
@@ -310,15 +338,14 @@
           "Authorization": "Bearer {{ .secrets.SLACK_BOT_TOKEN }}"
         },
         "body": {
-          "channel": "{{ .secrets.SLACK_PLATFORM_CHANNEL }}",
-          "text": "Production Resource Request — Approval Required",
+          "text": "Production Resource Request \u2014 Approval Required",
           "blocks": [
             {
-              "type": "header",
               "text": {
                 "type": "plain_text",
-                "text": "🔴 Production Resource Request — Approval Required"
-              }
+                "text": "\ud83d\udd34 Production Resource Request \u2014 Approval Required"
+              },
+              "type": "header"
             },
             {
               "type": "section",
@@ -348,24 +375,34 @@
               "type": "actions",
               "elements": [
                 {
+                  "url": "https://app.getport.io/cloud_resource_requestEntity?identifier={{ .outputs[\"fetch_service_context\"].request_id }}",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "View Request & Approve"
+                  },
                   "type": "button",
-                  "text": {"type": "plain_text", "text": "View Request & Approve"},
-                  "style": "primary",
-                  "url": "https://app.getport.io/cloud_resource_requestEntity?identifier={{ .outputs[\"fetch_service_context\"].request_id }}"
+                  "style": "primary"
                 },
                 {
-                  "type": "button",
-                  "text": {"type": "plain_text", "text": "Implementation Plan"},
-                  "url": "https://app.getport.io/cloud_resource_requestEntity?identifier={{ .outputs[\"fetch_service_context\"].request_id }}&activeTab=1"
+                  "url": "https://app.getport.io/cloud_resource_requestEntity?identifier={{ .outputs[\"fetch_service_context\"].request_id }}&activeTab=1",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Implementation Plan"
+                  },
+                  "type": "button"
                 }
               ]
             }
-          ]
+          ],
+          "channel": "{{ .secrets.SLACK_PLATFORM_CHANNEL }}"
         },
         "onTimeout": "fail",
         "onFailure": "terminate"
       },
-      "variables": {}
+      "variables": {},
+      "description": null,
+      "links": [],
+      "verbose": false
     },
     {
       "identifier": "open_pr_with_coding_agent",
@@ -384,7 +421,45 @@
         },
         "onFailure": "terminate"
       },
-      "variables": {}
+      "variables": {},
+      "description": null,
+      "links": [],
+      "verbose": false
+    },
+    {
+      "identifier": "slack_hitl_gate_stopped",
+      "title": "Slack \u2014 Run stopped at review gate",
+      "icon": "Slack",
+      "config": {
+        "type": "WEBHOOK",
+        "url": "https://slack.com/api/chat.postMessage",
+        "agent": false,
+        "synchronized": true,
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer {{ .secrets.SLACK_BOT_TOKEN }}"
+        },
+        "body": {
+          "text": "Resource request \u2014 stopped before AI plan (human gate)",
+          "blocks": [
+            {
+              "text": {
+                "text": "*Resource request cancelled before AI*\nSomeone chose *No \u2014 cancel run* (AI draft was not authorized).\n*Service:* {{ .outputs[\"fetch_service_context\"].service_title }}\n*Notes:* {{ .outputs[\"human_gate_before_plan\"].reviewer_notes }}",
+                "type": "mrkdwn"
+              },
+              "type": "section"
+            }
+          ],
+          "channel": "{{ .secrets.SLACK_PLATFORM_CHANNEL }}"
+        },
+        "onTimeout": "fail",
+        "onFailure": "continue"
+      },
+      "variables": {},
+      "description": null,
+      "links": [],
+      "verbose": false
     },
     {
       "identifier": "update_cloud_resource_in_port",
@@ -395,13 +470,13 @@
         "blueprintIdentifier": "cloudResource",
         "mapping": {
           "identifier": "{{ .outputs[\"fetch_service_context\"].resource_id }}",
-          "title": "{{ .outputs[\"fetch_service_context\"].resource_type }} — {{ .outputs[\"fetch_service_context\"].service_title }}",
+          "title": "{{ .outputs[\"fetch_service_context\"].resource_type }} \u2014 {{ .outputs[\"fetch_service_context\"].service_title }}",
           "properties": {
             "kind": "{{ .outputs[\"fetch_service_context\"].resource_type }}",
-            "status": "Provisioning",
-            "environment": "{{ .outputs[\"trigger\"].environment }}",
+            "link": "https://console.aws.amazon.com/rds/home?region=eu-west-1",
             "region": "eu-west-1",
-            "link": "https://console.aws.amazon.com/rds/home?region=eu-west-1"
+            "status": "Provisioning",
+            "environment": "{{ .outputs[\"trigger\"].environment }}"
           },
           "relations": {
             "used_by": "{{ .outputs[\"trigger\"].service }}"
@@ -409,7 +484,10 @@
         },
         "onFailure": "terminate"
       },
-      "variables": {}
+      "variables": {},
+      "description": null,
+      "links": [],
+      "verbose": false
     },
     {
       "identifier": "link_request_to_resource",
@@ -426,11 +504,14 @@
         },
         "onFailure": "terminate"
       },
-      "variables": {}
+      "variables": {},
+      "description": null,
+      "links": [],
+      "verbose": false
     },
     {
       "identifier": "slack_nonprod_notification",
-      "title": "Notify Slack — Auto-Approved",
+      "title": "Notify Slack \u2014 Auto-Approved",
       "icon": "Slack",
       "config": {
         "type": "WEBHOOK",
@@ -443,16 +524,15 @@
           "Authorization": "Bearer {{ .secrets.SLACK_BOT_TOKEN }}"
         },
         "body": {
-          "channel": "{{ .secrets.SLACK_PLATFORM_CHANNEL }}",
-          "text": "Resource Request — Auto-Approved",
+          "text": "Resource Request \u2014 Auto-Approved",
           "blocks": [
             {
-              "type": "header",
               "text": {
                 "type": "plain_text",
-                "text": "{{ if .outputs[\"trigger\"].infrastructure_type == \"Cloud\" then \"☁️\" else \"🏢\" end }} Resource Request — Auto-Approved",
+                "text": "{{ if .outputs[\"trigger\"].infrastructure_type == \"Cloud\" then \"\u2601\ufe0f\" else \"\ud83c\udfe2\" end }} Resource Request \u2014 Auto-Approved",
                 "emoji": true
-              }
+              },
+              "type": "header"
             },
             {
               "type": "section",
@@ -471,7 +551,7 @@
                 },
                 {
                   "type": "mrkdwn",
-                  "text": "*Status:*\nProvisioning 🟡"
+                  "text": "*Status:*\nProvisioning \ud83d\udfe1"
                 }
               ]
             },
@@ -482,50 +562,128 @@
               "type": "actions",
               "elements": [
                 {
+                  "url": "https://github.com/platformcon-carne/terraform-modules/pull/1",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "View PR"
+                  },
                   "type": "button",
-                  "text": {"type": "plain_text", "text": "View PR"},
-                  "style": "primary",
-                  "url": "https://github.com/platformcon-carne/terraform-modules/pull/1"
+                  "style": "primary"
                 },
                 {
-                  "type": "button",
-                  "text": {"type": "plain_text", "text": "Implementation Plan"},
-                  "url": "https://app.getport.io/cloud_resource_requestEntity?identifier={{ .outputs[\"fetch_service_context\"].request_id }}&activeTab=1"
+                  "url": "https://app.getport.io/cloud_resource_requestEntity?identifier={{ .outputs[\"fetch_service_context\"].request_id }}&activeTab=1",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Implementation Plan"
+                  },
+                  "type": "button"
                 },
                 {
-                  "type": "button",
-                  "text": {"type": "plain_text", "text": "Architecture"},
-                  "url": "https://app.getport.io/cloud_resource_requestEntity?identifier={{ .outputs[\"fetch_service_context\"].request_id }}&activeTab=2"
+                  "url": "https://app.getport.io/cloud_resource_requestEntity?identifier={{ .outputs[\"fetch_service_context\"].request_id }}&activeTab=2",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Architecture"
+                  },
+                  "type": "button"
                 },
                 {
-                  "type": "button",
-                  "text": {"type": "plain_text", "text": "View Resource"},
-                  "url": "https://app.getport.io/cloudResourceEntity?identifier={{ .outputs[\"fetch_service_context\"].resource_id }}"
+                  "url": "https://app.getport.io/cloudResourceEntity?identifier={{ .outputs[\"fetch_service_context\"].resource_id }}",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "View Resource"
+                  },
+                  "type": "button"
                 }
               ]
             }
-          ]
+          ],
+          "channel": "{{ .secrets.SLACK_PLATFORM_CHANNEL }}"
         },
         "onTimeout": "fail",
         "onFailure": "continue"
       },
-      "variables": {}
+      "variables": {},
+      "description": null,
+      "links": [],
+      "verbose": false
     }
   ],
   "connections": [
-    {"sourceIdentifier": "trigger", "targetIdentifier": "fetch_service_context"},
-    {"sourceIdentifier": "fetch_service_context", "targetIdentifier": "human_gate_before_plan"},
-    {"sourceIdentifier": "human_gate_before_plan", "targetIdentifier": "condition_infrastructure", "sourceOutletIdentifier": "proceed"},
-    {"sourceIdentifier": "human_gate_before_plan", "targetIdentifier": "slack_hitl_gate_stopped", "sourceOutletIdentifier": "stop"},
-    {"sourceIdentifier": "condition_infrastructure", "targetIdentifier": "ai_generate_plan_cloud", "sourceOutletIdentifier": "cloud"},
-    {"sourceIdentifier": "condition_infrastructure", "targetIdentifier": "ai_generate_plan_onprem", "sourceOutletIdentifier": "on_premise"},
-    {"sourceIdentifier": "ai_generate_plan_cloud", "targetIdentifier": "create_request"},
-    {"sourceIdentifier": "ai_generate_plan_onprem", "targetIdentifier": "create_request"},
-    {"sourceIdentifier": "create_request", "targetIdentifier": "condition_environment"},
-    {"sourceIdentifier": "condition_environment", "targetIdentifier": "slack_approval_request", "sourceOutletIdentifier": "production"},
-    {"sourceIdentifier": "condition_environment", "targetIdentifier": "open_pr_with_coding_agent", "sourceOutletIdentifier": "non_production"},
-    {"sourceIdentifier": "open_pr_with_coding_agent", "targetIdentifier": "update_cloud_resource_in_port"},
-    {"sourceIdentifier": "update_cloud_resource_in_port", "targetIdentifier": "link_request_to_resource"},
-    {"sourceIdentifier": "link_request_to_resource", "targetIdentifier": "slack_nonprod_notification"}
+    {
+      "sourceIdentifier": "trigger",
+      "targetIdentifier": "fetch_service_context",
+      "description": null
+    },
+    {
+      "sourceIdentifier": "fetch_service_context",
+      "targetIdentifier": "human_gate_before_plan",
+      "description": null
+    },
+    {
+      "sourceIdentifier": "human_gate_before_plan",
+      "targetIdentifier": "condition_infrastructure",
+      "sourceOutletIdentifier": "proceed",
+      "description": null
+    },
+    {
+      "sourceIdentifier": "human_gate_before_plan",
+      "targetIdentifier": "slack_hitl_gate_stopped",
+      "sourceOutletIdentifier": "stop",
+      "description": null
+    },
+    {
+      "sourceIdentifier": "condition_infrastructure",
+      "targetIdentifier": "ai_generate_plan_cloud",
+      "sourceOutletIdentifier": "cloud",
+      "description": null
+    },
+    {
+      "sourceIdentifier": "condition_infrastructure",
+      "targetIdentifier": "ai_generate_plan_onprem",
+      "sourceOutletIdentifier": "on_premise",
+      "description": null
+    },
+    {
+      "sourceIdentifier": "ai_generate_plan_cloud",
+      "targetIdentifier": "create_request",
+      "description": null
+    },
+    {
+      "sourceIdentifier": "ai_generate_plan_onprem",
+      "targetIdentifier": "create_request",
+      "description": null
+    },
+    {
+      "sourceIdentifier": "create_request",
+      "targetIdentifier": "condition_environment",
+      "description": null
+    },
+    {
+      "sourceIdentifier": "condition_environment",
+      "targetIdentifier": "slack_approval_request",
+      "sourceOutletIdentifier": "production",
+      "description": null
+    },
+    {
+      "sourceIdentifier": "condition_environment",
+      "targetIdentifier": "open_pr_with_coding_agent",
+      "sourceOutletIdentifier": "non_production",
+      "description": null
+    },
+    {
+      "sourceIdentifier": "open_pr_with_coding_agent",
+      "targetIdentifier": "update_cloud_resource_in_port",
+      "description": null
+    },
+    {
+      "sourceIdentifier": "update_cloud_resource_in_port",
+      "targetIdentifier": "link_request_to_resource",
+      "description": null
+    },
+    {
+      "sourceIdentifier": "link_request_to_resource",
+      "targetIdentifier": "slack_nonprod_notification",
+      "description": null
+    }
   ]
 }
