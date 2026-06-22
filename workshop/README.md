@@ -15,11 +15,11 @@ Use this folder for **PlatformCon–style working sessions**. Everything here is
 
 | Step | Focus |
 |------|--------|
-| 0 | Portal title / branding |
-| 1 | Catalog — blueprints + sample services |
-| 2 | Self-service action (the request form) |
-| 3 | AI workflow (import JSON; workflows may be beta in your org) |
-| 4 | Port **`skill`** → ask Port AI to request a resource (triggers **`request_cloud_resource`**) |
+| 0 | [Portal title / branding](./prompts/00-portal-branding.md) |
+| 1 | [Catalog — blueprints + sample services](./prompts/01-catalog-and-sample-data.md) |
+| 2 | [Self-service action (the request form)](./prompts/02-self-service-action.md) |
+| 3 | [AI workflow (import JSON; workflows may be beta in your org)](./prompts/03-ai-workflow.md) |
+| 4 | [Port **skill** → ask Port AI to request a resource (triggers **request_cloud_resource**)](./prompts/04-call-workflow-with-skill.md) |
 
 Scenario and personas: [../company-context.md](../company-context.md).
 
