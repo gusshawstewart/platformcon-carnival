@@ -59,6 +59,6 @@ The files `workshop/prompts/01`–`04` **embed** JSON from **`.cursor/skills/pla
 
 ## Primary attendee path
 
-Point the room at **[workshop/README.md](./README.md)** and the **[prompts](./prompts/README.md)** — not Cursor — unless someone explicitly wants the MCP skill.
+Point the room at the **[main workshop guide](../README.md)** — not Cursor — unless someone explicitly wants the MCP skill.
 
 **Step 4 note:** Attendees create the **`skill` blueprint** themselves unless their pooled org already has one (some orgs ship it by default). If **`skill` already exists**, they skip blueprint import and only create the skill entity.

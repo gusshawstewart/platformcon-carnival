@@ -12,7 +12,7 @@ description: >-
 
 Build a self-service cloud resource platform in Port: catalog → form → AI workflow → demo.
 
-**Live sessions (Port in browser):** point attendees to [workshop/README.md](../../../workshop/README.md) and [workshop/prompts/](../../../workshop/prompts/); facilitators to [workshop/FACILITATOR.md](../../../workshop/FACILITATOR.md). **Workshop logins:** attendees claim a row in the [credentials sheet](https://docs.google.com/spreadsheets/d/1U2ywpAVrfdG6H-iTPT0__L26MKdA5o6mqZyzp61CzLk/edit) (name + email) and use that row’s username/password—**no Port signup** for that path. This skill is for **Cursor + Port MCP** automation; authoring JSON is under [assets/](assets/).
+**Live sessions (Port in browser):** point attendees to the [main workshop guide](../../../README.md); facilitators to [workshop/FACILITATOR.md](../../../workshop/FACILITATOR.md). **Workshop logins:** attendees claim a row in the [credentials sheet](https://docs.google.com/spreadsheets/d/1U2ywpAVrfdG6H-iTPT0__L26MKdA5o6mqZyzp61CzLk/edit) (name + email) and use that row’s username/password—**no Port signup** for that path. This skill is for **Cursor + Port MCP** automation; authoring JSON is under [assets/](assets/).
 
 ## Prerequisites
 
