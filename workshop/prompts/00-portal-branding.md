@@ -6,8 +6,8 @@ You are helping me configure my Port organization for a workshop called **Platfo
 
 **What I will do in the Port UI (please confirm the exact menu names for my Port version if they differ):**
 
-1. Open **Port Builder** (or **Settings** → organization / portal settings, depending on layout).
-2. Find **Organization settings** or **Portal** / **Branding** where the product title is shown.
+1. Open **Port Builder**.
+2. Find **Organization settings**.
 3. Set the **Title** (or equivalent) to: `PlatformCon-Carne Platform`
 4. Save.
 
