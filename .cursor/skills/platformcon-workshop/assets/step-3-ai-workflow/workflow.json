@@ -116,15 +116,18 @@
         "agent": false,
         "synchronized": true,
         "method": "GET",
+        "headers": {
+          "Authorization": "Bearer {{ .secrets.PORT_CLIENT_SECRET }}"
+        },
         "onTimeout": "fail",
         "onFailure": "terminate"
       },
       "variables": {
         "request_id": "{{ .outputs[\"trigger\"].environment | ascii_downcase }}-{{ .outputs[\"trigger\"].service }}-{{ (if .outputs[\"trigger\"].infrastructure_type == \"Cloud\" then .outputs[\"trigger\"].cloud_resource_type else .outputs[\"trigger\"].onprem_resource_type end) | gsub(\" \"; \"-\") | ascii_downcase }}",
         "resource_id": "{{ .outputs[\"trigger\"].environment | ascii_downcase }}-{{ .outputs[\"trigger\"].service }}-{{ (if .outputs[\"trigger\"].infrastructure_type == \"Cloud\" then .outputs[\"trigger\"].cloud_resource_type else .outputs[\"trigger\"].onprem_resource_type end) | gsub(\" \"; \"-\") | ascii_downcase }}-resource",
-        "service_tier": "{{ .result.response.data.entity.properties.tier }}",
+        "service_tier": "{{ .result.response.entity.properties.tier }}",
         "resource_type": "{{ if .outputs[\"trigger\"].infrastructure_type == \"Cloud\" then .outputs[\"trigger\"].cloud_resource_type else .outputs[\"trigger\"].onprem_resource_type end }}",
-        "service_title": "{{ .result.response.data.entity.title }}"
+        "service_title": "{{ .result.response.entity.title }}"
       },
       "description": null,
       "links": [],

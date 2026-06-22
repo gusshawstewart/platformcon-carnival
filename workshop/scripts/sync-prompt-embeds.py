@@ -1,16 +1,103 @@
 #!/usr/bin/env python3
-"""Regenerate workshop/prompts/01–04 with JSON embedded from step-* assets (single source of truth)."""
+"""Regenerate workshop/prompts/01–04 and the Port step-4 skill entity JSON from step-* assets."""
 
+import json
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 PROMPTS = ROOT / "workshop" / "prompts"
 # JSON sources live with the Cursor skill (Port-in-browser attendees use embedded prompts, not these paths)
 ASSETS = ROOT / ".cursor" / "skills" / "platformcon-workshop" / "assets"
+STEP4 = ASSETS / "step-4-port-skill"
+SKILL_DIR = STEP4 / "platformcon-carne-request-resource"
 
 
 def fence(n: int = 3) -> str:
     return "`" * n
+
+
+def parse_skill_md(skill_dir: Path) -> dict:
+    """Parse Agent Skills SKILL.md frontmatter + body (see Port skills docs)."""
+    content = skill_dir.joinpath("SKILL.md").read_text()
+    match = re.match(r"^---\n(.*?)\n---\n(.*)$", content, re.DOTALL)
+    if not match:
+        raise ValueError(f"Invalid SKILL.md in {skill_dir}: missing YAML frontmatter")
+
+    frontmatter: dict = {}
+    for line in match.group(1).splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.endswith(":") and ">" not in line:
+            continue
+        if ":" in line:
+            key, _, value = line.partition(":")
+            frontmatter[key.strip()] = value.strip().strip("'\"")
+        elif line.startswith(">"):
+            frontmatter.setdefault("description", "")
+            frontmatter["description"] += line.lstrip("> ").strip() + " "
+
+    # Multi-line description via yaml block scalar (---\ndescription: >-\n  line...)
+    desc_match = re.search(
+        r"^description:\s*>-?\s*\n((?:[ \t]+.+\n?)+)",
+        match.group(1),
+        re.MULTILINE,
+    )
+    if desc_match:
+        frontmatter["description"] = " ".join(
+            ln.strip() for ln in desc_match.group(1).splitlines()
+        ).strip()
+
+    metadata_title_match = re.search(
+        r"^metadata:\s*\n\s*title:\s*(.+)$", match.group(1), re.MULTILINE
+    )
+    title = (
+        metadata_title_match.group(1).strip().strip("'\"")
+        if metadata_title_match
+        else frontmatter.get("name", "Skill")
+    )
+
+    return {
+        "identifier": frontmatter["name"],
+        "title": title,
+        "description": frontmatter["description"].strip(),
+        "instructions": match.group(2).strip(),
+    }
+
+
+def read_skill_assets(skill_dir: Path) -> list[dict]:
+    assets_dir = skill_dir / "assets"
+    if not assets_dir.is_dir():
+        return []
+    items: list[dict] = []
+    for file_path in sorted(assets_dir.rglob("*")):
+        if file_path.is_file():
+            rel = file_path.relative_to(assets_dir)
+            items.append(
+                {
+                    "path": f"assets/{rel.as_posix()}",
+                    "content": file_path.read_text(),
+                }
+            )
+    return items
+
+
+def build_skill_entity(skill_dir: Path) -> dict:
+    parsed = parse_skill_md(skill_dir)
+    properties: dict = {
+        "description": parsed["description"],
+        "instructions": parsed["instructions"],
+        "location": "global",
+    }
+    assets = read_skill_assets(skill_dir)
+    if assets:
+        properties["assets"] = assets
+    return {
+        "identifier": parsed["identifier"],
+        "title": parsed["title"],
+        "properties": properties,
+    }
 
 
 def main() -> None:
@@ -103,7 +190,7 @@ In Port, open **Settings → Self-service → Actions → Import** (wording may 
 - **INPUT node** `human_gate_before_plan`: after service context loads, someone chooses **Yes — generate draft plan with AI** or **No — cancel run** before any AI step runs. That authorizes **running the AI to draft a plan**, not approving the final infrastructure change.
 - **AI nodes** use `tools: []` and **no `mcpServers`** so the workshop does not require GitHub or Notion MCP server entities in Port.
 - **Slack** nodes need secrets `SLACK_BOT_TOKEN` and `SLACK_PLATFORM_CHANNEL` to succeed; other steps may still run.
-- The fetch-service webhook uses **`https://api.port.io`** for the Port API. Slack deep links still use `app.getport.io`; change if your tenant uses a different app host.
+- The fetch-service webhook uses **`https://api.port.io`** for the Port API and needs secret **`PORT_CLIENT_SECRET`** (Bearer token) in workflow secrets. Slack deep links still use `app.getport.io`; change if your tenant uses a different app host.
 
 **After import:** Tell me where to open the **run timeline** and what **waiting for input** looks like for the INPUT step.
 
@@ -117,38 +204,59 @@ In Port, open **Settings → Self-service → Actions → Import** (wording may 
 '''
     (PROMPTS / "03-ai-workflow.md").write_text(md03)
 
-    backup = (ASSETS / "step-4-demo-flow/backup-entity.json").read_text().strip()
-    md04 = f'''This is **Step 4 — smoke test your build** for **you as an attendee** (after steps 0–3).
+    skill_blueprint = (STEP4 / "skill-blueprint.json").read_text().strip()
+    skill_entity_obj = build_skill_entity(SKILL_DIR)
+    skill_entity = json.dumps(skill_entity_obj, indent=2)
+    skill_identifier = skill_entity_obj["identifier"]
+    (STEP4 / "skill-entity.json").write_text(skill_entity + "\n")
 
-**What this step is for:** Prove the catalog, self-service form, and workflow work end-to-end. You will run one **staging** request (non-production path) and one **production** request (approval path), and check the results in Port (and Slack, if your org configured it).
+    md04 = f'''You are helping me finish the **PlatformCon-Carne workshop** by creating a **Port skill** that triggers the resource creation workflow.
 
-**Optional Port AI:** Paste this file into Port AI if you want a **checklist-style coach** while you work. Port AI cannot use Port for you — **you** still do every click in the browser (Self-Service, workflow run, **Authorize AI to draft a plan**, entity pages).
+**Who this is for:** New Port users working in **Port AI** chat. The JSON below is **included so I can copy it** into Port without hunting files on disk.
 
-**Prerequisites:** Branding done, blueprints + sample services loaded, action imported, workflow imported (steps 0–3).
+**What we are doing** ([Port skills docs](https://docs.port.io/ai-interfaces/skills/)):
+
+1. Create the **`skill` blueprint** in the data model (skip if your org already has one).
+2. Create a **custom skill entity** whose only job is to call workflow **`request_cloud_resource`** via **`trigger_workflow_run`**.
+3. Open **Port AI** and ask to request a resource — Port AI loads the skill and starts the workflow for you.
+
+**Prerequisites:** Steps 0–3 complete (branding, catalog, action, workflow **`request_cloud_resource`** published).
 
 ---
 
-### A — Staging path (what you should see)
+## 1 — Blueprint `skill`
 
-1. In Port, open **Self-Service** → **Create a new resource**.
-2. Submit: **Cloud** · **RDS Database** · **Staging** · **payments-service** · Additional requirements: `Standard configuration with automated backups enabled`.
-3. Open the **workflow run**. If it pauses on **Authorize AI to draft a plan** → **Provide inputs** → **Yes — generate draft plan with AI**.
-4. Confirm a **resource request** entity (blueprint `cloud_resource_request`) appears with **implementation plan** and **architecture** filled in (entity page / tabs, depending on your layout).
-5. If Slack is configured for your org, check the channel for an **auto-approved** style message.
+**In Port:** **Builder → Blueprints → Import** (or paste JSON). Skip this section if blueprint **`skill`** already exists.
 
-### B — Production path (what you should see)
+{fence(3)}json
+{skill_blueprint}
+{fence(3)}
 
-Repeat **A**, but set **Environment** to **Production**. Confirm the run follows the **production** branch (e.g. Slack approval message with links — only if secrets exist).
+---
 
-### C — Backup sample (optional)
+## 2 — Skill entity `{skill_identifier}`
 
-If **AI is slow** or you want to **see example plan text without waiting for the AI node**, you or a facilitator can import this ready-made entity on blueprint **`cloud_resource_request`** using Port’s entity import (or equivalent). **Select all the text in the sample JSON box below**, copy, and paste into that import flow.
+**In Port:** Open the catalog page for blueprint **`skill`** → **New entity** (or entity JSON import). **Select all the text in the JSON box below**, copy, and paste.
 
-{fence(n)}
-{backup}
-{fence(n)}
+{fence(3)}json
+{skill_entity}
+{fence(3)}
 
-**Done when:** You have personally completed **A** and **B** in Port (or you and a facilitator have walked through the same checks together at your table).
+**Check:** Entity **`{skill_identifier}`** appears on the **Skill** catalog page.
+
+---
+
+## 3 — Call the skill from Port AI chat
+
+1. Open **Port AI** (in-product chat).
+2. Send a message such as:
+
+   > Request a cloud resource for the PlatformCon-Carne workshop.
+
+3. Port AI should **load** skill **`{skill_identifier}`** and call **`trigger_workflow_run`** on workflow **`request_cloud_resource`** with the workshop defaults (Cloud · RDS Database · Staging · payments-service) unless you specified other values.
+4. Confirm you receive a **workflow run id** and can open the run in Port.
+
+**Done when:** Skill entity exists and Port AI successfully triggered **`request_cloud_resource`**.
 
 Presenter notes (optional): [step-4-demo-flow/README.md](../../.cursor/skills/platformcon-workshop/assets/step-4-demo-flow/README.md) in this repo.
 '''

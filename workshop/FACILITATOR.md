@@ -44,19 +44,21 @@ New signups may hit **mandatory first-run product tours**. Mitigations:
 
 ## Slack and secrets
 
-The workflow JSON references **Slack** placeholders (`SLACK_BOT_TOKEN`, `SLACK_PLATFORM_CHANNEL`). For a minimal hands-on:
+The workflow JSON references **Slack** placeholders (`SLACK_BOT_TOKEN`, `SLACK_PLATFORM_CHANNEL`) and **`PORT_CLIENT_SECRET`** for the Port API fetch step. For a minimal hands-on:
 
 - Either configure those secrets in each pooled org, **or**
-- Tell attendees **Slack nodes may fail** until secrets exist — catalog + form + most steps still land.
+- Tell attendees **Slack nodes may fail** until secrets exist — catalog + form + most steps still land. The **fetch service context** step needs **`PORT_CLIENT_SECRET`** (Port API Bearer token) or it will 401.
+
+## Keeping workshop prompts in sync
+
+The files `workshop/prompts/01`–`04` **embed** JSON from **`.cursor/skills/platformcon-workshop/assets/`**. Step **4** regenerates **`skill-entity.json`** from **`assets/step-4-port-skill/platformcon-carne-request-resource/SKILL.md`**. From repo root:
+
+1. After you edit JSON under **assets** (or edit **`SKILL.md`** for the demo skill), run **`python3 workshop/scripts/sync-prompt-embeds.py`** so prompts and **`skill-entity.json`** stay in sync.
+
+2. To align `.cursor/skills/platformcon-workshop/assets/step-3-ai-workflow/workflow.json` with a typical **Port UI export** (null trigger titles, `api.port.io` on the catalog fetch, `category`, `links` / `verbose` on nodes, Slack `body` key order, `slack_hitl_gate_stopped` after `open_pr`, etc.), run **`python3 workshop/scripts/apply_port_export_shape.py`**, then run **`sync-prompt-embeds.py`** again.
 
 ## Primary attendee path
 
 Point the room at **[workshop/README.md](./README.md)** and the **[prompts](./prompts/README.md)** — not Cursor — unless someone explicitly wants the MCP skill.
 
-## Keeping workshop prompts in sync
-
-The files `workshop/prompts/01`–`04` **embed** the same JSON as the **Cursor skill assets** (`.cursor/skills/platformcon-workshop/assets/`). From repo root:
-
-1. After you edit JSON under **assets** (or run `apply_port_export_shape.py` on the workflow file there), run **`python3 workshop/scripts/sync-prompt-embeds.py`** so the prompt files pick up the changes.
-
-2. To align `.cursor/skills/platformcon-workshop/assets/step-3-ai-workflow/workflow.json` with a typical **Port UI export** (null trigger titles, `api.port.io` on the catalog fetch, `category`, `links` / `verbose` on nodes, Slack `body` key order, `slack_hitl_gate_stopped` after `open_pr`, etc.), run **`python3 workshop/scripts/apply_port_export_shape.py`**, then run **`sync-prompt-embeds.py`** again.
+**Step 4 note:** Attendees create the **`skill` blueprint** themselves unless their pooled org already has one (some orgs ship it by default). If **`skill` already exists**, they skip blueprint import and only create the skill entity.

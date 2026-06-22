@@ -36,12 +36,18 @@ def main() -> None:
 
     nodes = data["nodes"]
 
-    # fetch_service_context → api.port.io
+    # fetch_service_context → api.port.io + Port API auth
     for n in nodes:
         if n["identifier"] == "fetch_service_context":
             n["config"]["url"] = (
                 "https://api.port.io/v1/blueprints/service/entities/{{ .outputs[\"trigger\"].service }}"
             )
+            n["config"]["headers"] = {
+                "Authorization": "Bearer {{ .secrets.PORT_CLIENT_SECRET }}"
+            }
+            vars_ = n["variables"]
+            vars_["service_tier"] = "{{ .result.response.entity.properties.tier }}"
+            vars_["service_title"] = "{{ .result.response.entity.title }}"
 
     # Move slack_hitl_gate_stopped to immediately after open_pr_with_coding_agent (Port export order)
     slack_hitl = next(n for n in nodes if n["identifier"] == "slack_hitl_gate_stopped")

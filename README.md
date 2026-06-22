@@ -9,7 +9,7 @@
 Start here:
 
 - **[workshop/README.md](./workshop/README.md)** — how to run the session in the browser  
-- **[workshop/prompts/](./workshop/prompts/)** — copy-paste prompts with **embedded JSON** for Port (GitHub in a browser is enough)  
+- **[workshop/prompts/](./workshop/prompts/)** — copy-paste prompts with **embedded JSON** (step 4: Port skill that triggers **`request_cloud_resource`**)  
 
 ### Workshop logins (attendees)
 

@@ -1,33 +1,36 @@
-# Step 4 — Test the Setup
+# Step 4 — Port skill (request resource)
 
-**Audience:** Attendees (and facilitators helping a table) after the catalog, action, and workflow are in place. This step is a **hands-on smoke test** in the Port UI—not another import.
+**Audience:** Attendees after steps 0–3. Create a **Port skill** that triggers workflow **`request_cloud_resource`**.
 
-Walk through verifying the platform works.
+## 1. Create the `skill` blueprint
 
-## Staging request (auto-approved)
+If blueprint **`skill`** is missing, import [`../assets/step-4-port-skill/skill-blueprint.json`](../assets/step-4-port-skill/skill-blueprint.json).
 
-1. Port → Self-Service → "Create a new resource"
-2. Infrastructure: Cloud
-3. Resource Type: RDS Database
-4. Environment: **Staging**
-5. Service: payments-service
-6. Additional Requirements: "Standard configuration with automated backups enabled"
-7. Submit and watch the workflow run
-8. Verify the request entity has implementation plan and architecture diagram
-9. Check Slack for auto-approve notification
+## 2. Create the skill entity
 
-## Production request (requires approval)
+Upsert on blueprint **`skill`** from [`../assets/step-4-port-skill/skill-entity.json`](../assets/step-4-port-skill/skill-entity.json).
 
-Repeat with Environment: **Production**. Verify Slack shows an approval request with Approve button.
+Identifier: **`platformcon-carne-request-resource`**
 
-## Backup
+## 3. Use in Port AI chat
 
-If the AI node is slow, import `.cursor/skills/platformcon-workshop/assets/step-4-demo-flow/backup-entity.json` via Port UI to show expected output.
+User message example:
 
-## Demo script
+> Request a cloud resource for the PlatformCon-Carne workshop.
 
-For presenter notes, see `.cursor/skills/platformcon-workshop/assets/step-4-demo-flow/README.md`.
+Port AI loads the skill and calls **`trigger_workflow_run`** with:
+
+| Input | Default |
+|-------|---------|
+| `infrastructure_type` | Cloud |
+| `cloud_resource_type` | RDS Database |
+| `environment` | Staging |
+| `service` | payments-service |
+| `additional_context` | Standard configuration with automated backups enabled |
 
 ## Done when
 
-User has seen both staging (auto-approve) and production (approval) paths work.
+- Skill entity exists
+- **`request_cloud_resource`** workflow run was triggered (run id returned)
+
+Presenter notes: [`../assets/step-4-demo-flow/README.md`](../assets/step-4-demo-flow/README.md)

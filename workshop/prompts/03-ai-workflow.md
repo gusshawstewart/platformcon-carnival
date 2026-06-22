@@ -9,7 +9,7 @@ You are helping me install the **AI workflow** for the PlatformCon-Carne worksho
 - **INPUT node** `human_gate_before_plan`: after service context loads, someone chooses **Yes — generate draft plan with AI** or **No — cancel run** before any AI step runs. That authorizes **running the AI to draft a plan**, not approving the final infrastructure change.
 - **AI nodes** use `tools: []` and **no `mcpServers`** so the workshop does not require GitHub or Notion MCP server entities in Port.
 - **Slack** nodes need secrets `SLACK_BOT_TOKEN` and `SLACK_PLATFORM_CHANNEL` to succeed; other steps may still run.
-- The fetch-service webhook uses **`https://api.port.io`** for the Port API. Slack deep links still use `app.getport.io`; change if your tenant uses a different app host.
+- The fetch-service webhook uses **`https://api.port.io`** for the Port API and needs secret **`PORT_CLIENT_SECRET`** (Bearer token) in workflow secrets. Slack deep links still use `app.getport.io`; change if your tenant uses a different app host.
 
 **After import:** Tell me where to open the **run timeline** and what **waiting for input** looks like for the INPUT step.
 
@@ -136,15 +136,18 @@ You are helping me install the **AI workflow** for the PlatformCon-Carne worksho
         "agent": false,
         "synchronized": true,
         "method": "GET",
+        "headers": {
+          "Authorization": "Bearer {{ .secrets.PORT_CLIENT_SECRET }}"
+        },
         "onTimeout": "fail",
         "onFailure": "terminate"
       },
       "variables": {
         "request_id": "{{ .outputs[\"trigger\"].environment | ascii_downcase }}-{{ .outputs[\"trigger\"].service }}-{{ (if .outputs[\"trigger\"].infrastructure_type == \"Cloud\" then .outputs[\"trigger\"].cloud_resource_type else .outputs[\"trigger\"].onprem_resource_type end) | gsub(\" \"; \"-\") | ascii_downcase }}",
         "resource_id": "{{ .outputs[\"trigger\"].environment | ascii_downcase }}-{{ .outputs[\"trigger\"].service }}-{{ (if .outputs[\"trigger\"].infrastructure_type == \"Cloud\" then .outputs[\"trigger\"].cloud_resource_type else .outputs[\"trigger\"].onprem_resource_type end) | gsub(\" \"; \"-\") | ascii_downcase }}-resource",
-        "service_tier": "{{ .result.response.data.entity.properties.tier }}",
+        "service_tier": "{{ .result.response.entity.properties.tier }}",
         "resource_type": "{{ if .outputs[\"trigger\"].infrastructure_type == \"Cloud\" then .outputs[\"trigger\"].cloud_resource_type else .outputs[\"trigger\"].onprem_resource_type end }}",
-        "service_title": "{{ .result.response.data.entity.title }}"
+        "service_title": "{{ .result.response.entity.title }}"
       },
       "description": null,
       "links": [],

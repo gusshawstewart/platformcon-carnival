@@ -45,7 +45,7 @@ Confirm before starting:
 - [ ] Step 1 — Catalog foundation (3 blueprints + sample services)
 - [ ] Step 2 — Self-service action
 - [ ] Step 3 — AI workflow
-- [ ] Step 4 — Test / demo
+- [ ] Step 4 — Port `skill` blueprint + request-resource skill (triggers workflow)
 ```
 
 | Step | Read when executing | Repo assets |
@@ -54,7 +54,7 @@ Confirm before starting:
 | 1 | [steps/step-1-catalog.md](steps/step-1-catalog.md) | [assets/step-1-catalog-foundation/](assets/step-1-catalog-foundation/) · [assets/sample-data/services.json](assets/sample-data/services.json) |
 | 2 | [steps/step-2-action.md](steps/step-2-action.md) | [assets/step-2-self-service-action/workflow.json](assets/step-2-self-service-action/workflow.json) |
 | 3 | [steps/step-3-workflow.md](steps/step-3-workflow.md) | [assets/step-3-ai-workflow/workflow.json](assets/step-3-ai-workflow/workflow.json) |
-| 4 | [steps/step-4-demo.md](steps/step-4-demo.md) | [assets/step-4-demo-flow/backup-entity.json](assets/step-4-demo-flow/backup-entity.json) |
+| 4 | [steps/step-4-demo.md](steps/step-4-demo.md) | [assets/step-4-port-skill/skill-blueprint.json](assets/step-4-port-skill/skill-blueprint.json) · [assets/step-4-port-skill/skill-entity.json](assets/step-4-port-skill/skill-entity.json) (from [SKILL.md](assets/step-4-port-skill/platformcon-carne-request-resource/SKILL.md)) |
 
 ## What you're building
 

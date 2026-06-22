@@ -6,7 +6,7 @@ Use these files **in order** during the workshop.
 
 ## For attendees (new Port users)
 
-Steps **1–3** embed **full JSON** inside the markdown. Step **4** is mostly a **click-through checklist**; it only includes optional **backup entity JSON** if you need a quick sample without waiting for AI.
+Steps **1–3** embed **full JSON** inside the markdown. Step **4** adds the Port **`skill` blueprint**, a skill entity that **triggers `request_cloud_resource`**, and a **Port AI chat** example to run it.
 
 - Open this file on **GitHub** (raw or rendered). For each step with JSON, **select everything inside that step’s code box**, copy, and paste into Port’s **Import** UI, **or**
 - **Paste the whole `.md` file** into Port AI so the model sees the same JSON and can coach you while you paste into Port.
@@ -17,7 +17,7 @@ You do **not** need a local Git clone for the copy-paste path—GitHub in the br
 
 Step **0** is short text only (no JSON).
 
-**Step 4** is different: it is a **smoke-test checklist** (no JSON to import). You run real requests in Port to prove staging and production paths work. You may paste it into Port AI as a coach, but **you** still do every action in the UI.
+**Step 4:** Import the **`skill` blueprint**, create the **`platformcon-carne-request-resource`** skill entity, then ask **Port AI** to request a cloud resource — the skill calls workflow **`request_cloud_resource`** for you.
 
 ## Order
 
@@ -27,7 +27,7 @@ Step **0** is short text only (no JSON).
 | 1 | [01-catalog-and-sample-data.md](./01-catalog-and-sample-data.md) |
 | 2 | [02-self-service-action.md](./02-self-service-action.md) |
 | 3 | [03-ai-workflow.md](./03-ai-workflow.md) |
-| 4 | [04-demo-verification.md](./04-demo-verification.md) — smoke test (you in Port; optional Port AI as checklist) |
+| 4 | [04-demo-verification.md](./04-demo-verification.md) — **`skill` blueprint** + skill that triggers **`request_cloud_resource`** |
 
 ## For maintainers
 
