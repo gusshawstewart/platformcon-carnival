@@ -25,7 +25,10 @@ The `cloudResource` blueprint is the inventory. After provisioning, the actual r
 ```
 cloudResource ──used_by──→ service
 cloud_resource_request ──requested_by_service──→ service
+cloud_resource_request ──provisioned_resource──→ cloudResource
 ```
+
+`approved_by` on `cloud_resource_request` records who approved the request (auto-approve label or approver name from Slack).
 
 ## Time
 

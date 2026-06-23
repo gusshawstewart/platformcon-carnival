@@ -178,6 +178,7 @@ In Port, open **Settings → Self-service → Actions → Import** (wording may 
     (PROMPTS / "02-self-service-action.md").write_text(md02)
 
     w3 = (ASSETS / "step-3-ai-workflow/workflow.json").read_text().strip()
+    crr = (ASSETS / "step-1-catalog-foundation/cloud_resource_request.json").read_text().strip()
     n = 5
     md03 = f'''You are helping me install the **AI workflow** for the PlatformCon-Carne workshop in Port.
 
@@ -185,8 +186,15 @@ In Port, open **Settings → Self-service → Actions → Import** (wording may 
 
 **Goal:** Workflow identifier `request_cloud_resource` is **published** and wired to the same self-service action from the previous step. Submitting the form should start a run.
 
+**Before importing the workflow:** Update blueprint **`cloud_resource_request`** so runtime entity writes succeed. The workflow sets **`approved_by`** (property) and **`provisioned_resource`** (relation → `cloudResource`). If you already created this blueprint in Step 1 without those fields, **Builder → Blueprints → `cloud_resource_request` → Import / edit** and merge the JSON below (or add the property and relation manually).
+
+{fence(3)}json
+{crr}
+{fence(3)}
+
 **Notes:**
 - **Workflows may be beta** — if import is disabled, say what to ask an admin.
+- The workflow has **14 nodes**.
 - **INPUT node** `human_gate_before_plan`: after service context loads, someone chooses **Yes — generate draft plan with AI** or **No — cancel run** before any AI step runs. That authorizes **running the AI to draft a plan**, not approving the final infrastructure change.
 - **AI nodes** use `tools: []` and **no `mcpServers`** so the workshop does not require GitHub or Notion MCP server entities in Port.
 - **Slack** nodes need secrets `SLACK_BOT_TOKEN` and `SLACK_PLATFORM_CHANNEL` to succeed; other steps may still run.

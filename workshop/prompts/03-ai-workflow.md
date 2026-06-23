@@ -4,8 +4,104 @@ You are helping me install the **AI workflow** for the PlatformCon-Carne worksho
 
 **Goal:** Workflow identifier `request_cloud_resource` is **published** and wired to the same self-service action from the previous step. Submitting the form should start a run.
 
+**Before importing the workflow:** Update blueprint **`cloud_resource_request`** so runtime entity writes succeed. The workflow sets **`approved_by`** (property) and **`provisioned_resource`** (relation → `cloudResource`). If you already created this blueprint in Step 1 without those fields, **Builder → Blueprints → `cloud_resource_request` → Import / edit** and merge the JSON below (or add the property and relation manually).
+
+```json
+{
+  "identifier": "cloud_resource_request",
+  "title": "Cloud Resource Request",
+  "icon": "NewPage",
+  "schema": {
+    "properties": {
+      "status": {
+        "title": "Status",
+        "type": "string",
+        "enum": ["Pending Approval", "Approved", "Rejected", "Provisioning", "Provisioned"],
+        "enumColors": {
+          "Pending Approval": "yellow",
+          "Approved": "blue",
+          "Rejected": "red",
+          "Provisioning": "turquoise",
+          "Provisioned": "green"
+        }
+      },
+      "resource_type": {
+        "title": "Resource Type",
+        "type": "string"
+      },
+      "environment": {
+        "title": "Environment",
+        "type": "string",
+        "enum": ["Development", "Staging", "Production"],
+        "enumColors": {
+          "Development": "green",
+          "Staging": "yellow",
+          "Production": "red"
+        }
+      },
+      "infrastructure_type": {
+        "title": "Infrastructure",
+        "type": "string",
+        "enum": ["Cloud", "On-Premise"]
+      },
+      "implementation_plan": {
+        "title": "Implementation Plan",
+        "type": "string",
+        "format": "markdown"
+      },
+      "architecture": {
+        "title": "Architecture Diagram",
+        "type": "string",
+        "format": "markdown"
+      },
+      "requested_at": {
+        "title": "Requested At",
+        "type": "string",
+        "format": "date-time"
+      },
+      "approved_at": {
+        "title": "Approved At",
+        "type": "string",
+        "format": "date-time"
+      },
+      "approved_by": {
+        "title": "Approved By",
+        "type": "string"
+      },
+      "pr_url": {
+        "title": "Terraform PR",
+        "type": "string",
+        "format": "url"
+      },
+      "additional_context": {
+        "title": "Additional Requirements",
+        "type": "string"
+      }
+    },
+    "required": []
+  },
+  "mirrorProperties": {},
+  "calculationProperties": {},
+  "relations": {
+    "requested_by_service": {
+      "title": "Requested By Service",
+      "target": "service",
+      "required": false,
+      "many": false
+    },
+    "provisioned_resource": {
+      "title": "Provisioned Resource",
+      "target": "cloudResource",
+      "required": false,
+      "many": false
+    }
+  }
+}
+```
+
 **Notes:**
 - **Workflows may be beta** — if import is disabled, say what to ask an admin.
+- The workflow has **14 nodes**.
 - **INPUT node** `human_gate_before_plan`: after service context loads, someone chooses **Yes — generate draft plan with AI** or **No — cancel run** before any AI step runs. That authorizes **running the AI to draft a plan**, not approving the final infrastructure change.
 - **AI nodes** use `tools: []` and **no `mcpServers`** so the workshop does not require GitHub or Notion MCP server entities in Port.
 - **Slack** nodes need secrets `SLACK_BOT_TOKEN` and `SLACK_PLATFORM_CHANNEL` to succeed; other steps may still run.

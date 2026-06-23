@@ -112,6 +112,10 @@ You are helping me build the **catalog foundation** for the PlatformCon-Carne wo
         "type": "string",
         "format": "date-time"
       },
+      "approved_by": {
+        "title": "Approved By",
+        "type": "string"
+      },
       "pr_url": {
         "title": "Terraform PR",
         "type": "string",
@@ -130,6 +134,12 @@ You are helping me build the **catalog foundation** for the PlatformCon-Carne wo
     "requested_by_service": {
       "title": "Requested By Service",
       "target": "service",
+      "required": false,
+      "many": false
+    },
+    "provisioned_resource": {
+      "title": "Provisioned Resource",
+      "target": "cloudResource",
       "required": false,
       "many": false
     }
