@@ -44,10 +44,10 @@ New signups may hit **mandatory first-run product tours**. Mitigations:
 
 ## Slack and secrets
 
-The workflow JSON references **Slack** placeholders (`SLACK_BOT_TOKEN`, `SLACK_PLATFORM_CHANNEL`) and **`PORT_CLIENT_SECRET`** for the Port API fetch step. For a minimal hands-on:
+The workflow JSON references **Slack** placeholders (`SLACK_BOT_TOKEN`, `SLACK_PLATFORM_CHANNEL`) and Port API credentials (`PORT_CLIENT_ID`, `PORT_CLIENT_SECRET`) for the catalog fetch step. For a minimal hands-on:
 
 - Either configure those secrets in each pooled org, **or**
-- Tell attendees **Slack nodes may fail** until secrets exist — catalog + form + most steps still land. The **fetch service context** step needs **`PORT_CLIENT_SECRET`** (Port API Bearer token) or it will 401.
+- Tell attendees **Slack nodes may fail** until secrets exist — catalog + form + most steps still land. **`fetch_service_context`** needs **`PORT_CLIENT_ID`** and **`PORT_CLIENT_SECRET`**; the workflow’s **`get_port_token`** node exchanges them for a JWT before calling the Port API.
 
 ## Keeping workshop prompts in sync
 

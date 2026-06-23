@@ -36,14 +36,22 @@ def main() -> None:
 
     nodes = data["nodes"]
 
-    # fetch_service_context → api.port.io + Port API auth
+    # get_port_token + fetch_service_context → api.port.io + Port API auth
     for n in nodes:
+        if n["identifier"] == "get_port_token":
+            n["config"]["url"] = "https://api.port.io/v1/auth/access_token"
+            n["config"]["headers"] = {"Content-Type": "application/json"}
+            n["config"]["body"] = {
+                "clientId": "{{ .secrets.PORT_CLIENT_ID }}",
+                "clientSecret": "{{ .secrets.PORT_CLIENT_SECRET }}",
+            }
+            n["variables"] = {"accessToken": "{{ .result.response.accessToken }}"}
         if n["identifier"] == "fetch_service_context":
             n["config"]["url"] = (
                 "https://api.port.io/v1/blueprints/service/entities/{{ .outputs[\"trigger\"].service }}"
             )
             n["config"]["headers"] = {
-                "Authorization": "Bearer {{ .secrets.PORT_CLIENT_SECRET }}"
+                "Authorization": "Bearer {{ .outputs[\"get_port_token\"].accessToken }}"
             }
             vars_ = n["variables"]
             vars_["service_tier"] = "{{ .result.response.entity.properties.tier }}"

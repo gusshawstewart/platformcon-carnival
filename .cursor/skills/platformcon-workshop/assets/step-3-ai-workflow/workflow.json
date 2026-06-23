@@ -107,6 +107,33 @@
       "verbose": false
     },
     {
+      "identifier": "get_port_token",
+      "title": "Get Port API Token",
+      "icon": "Port",
+      "config": {
+        "type": "WEBHOOK",
+        "url": "https://api.port.io/v1/auth/access_token",
+        "agent": false,
+        "synchronized": true,
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "clientId": "{{ .secrets.PORT_CLIENT_ID }}",
+          "clientSecret": "{{ .secrets.PORT_CLIENT_SECRET }}"
+        },
+        "onTimeout": "fail",
+        "onFailure": "terminate"
+      },
+      "variables": {
+        "accessToken": "{{ .result.response.accessToken }}"
+      },
+      "description": null,
+      "links": [],
+      "verbose": false
+    },
+    {
       "identifier": "fetch_service_context",
       "title": "Fetch Service Context",
       "icon": "Port",
@@ -117,7 +144,7 @@
         "synchronized": true,
         "method": "GET",
         "headers": {
-          "Authorization": "Bearer {{ .secrets.PORT_CLIENT_SECRET }}"
+          "Authorization": "Bearer {{ .outputs[\"get_port_token\"].accessToken }}"
         },
         "onTimeout": "fail",
         "onFailure": "terminate"
@@ -614,6 +641,11 @@
   "connections": [
     {
       "sourceIdentifier": "trigger",
+      "targetIdentifier": "get_port_token",
+      "description": null
+    },
+    {
+      "sourceIdentifier": "get_port_token",
       "targetIdentifier": "fetch_service_context",
       "description": null
     },

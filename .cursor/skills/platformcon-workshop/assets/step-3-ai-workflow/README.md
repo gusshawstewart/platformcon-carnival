@@ -4,14 +4,15 @@
 
 The intelligence behind the form. A multi-step workflow that:
 
-1. **Fetches service context** from the catalog
-2. **Human-in-the-loop (INPUT node)** — authorizes **whether Port may run the AI** to draft an implementation plan (not approval of the final change). Optional notes; **Yes — generate draft plan with AI** continues the run, **No — cancel run** stops before AI and can notify Slack. `numOfResponders` is **1** per path for workshop use.
-3. **Branches** on Cloud vs On-Premise
-4. **Calls an AI node** to generate an implementation plan + architecture diagram
-5. **Creates a request entity** in Port with the AI output
-6. **Branches** on environment — Production goes to Slack for approval, everything else auto-approves
-7. **Opens a PR** (non-production) and creates the cloud resource entity
-8. **Notifies Slack** with links to the plan, architecture, and PR
+1. **Gets a Port API token** from client credentials (`get_port_token`)
+2. **Fetches service context** from the catalog
+3. **Human-in-the-loop (INPUT node)** — authorizes **whether Port may run the AI** to draft an implementation plan (not approval of the final change). Optional notes; **Yes — generate draft plan with AI** continues the run, **No — cancel run** stops before AI and can notify Slack. `numOfResponders` is **1** per path for workshop use.
+4. **Branches** on Cloud vs On-Premise
+5. **Calls an AI node** to generate an implementation plan + architecture diagram
+6. **Creates a request entity** in Port with the AI output
+7. **Branches** on environment — Production goes to Slack for approval, everything else auto-approves
+8. **Opens a PR** (non-production) and creates the cloud resource entity
+9. **Notifies Slack** with links to the plan, architecture, and PR
 
 ## The AI Node
 
@@ -26,8 +27,9 @@ No external MCP tools are required for this workshop workflow; the model answers
 
 ```
 trigger
-  └── fetch_service_context
-        └── human_gate_before_plan (INPUT — authorize AI draft only)
+  └── get_port_token (POST /v1/auth/access_token)
+        └── fetch_service_context
+              └── human_gate_before_plan (INPUT — authorize AI draft only)
               ├── proceed → condition: Cloud or On-Premise?
               │         ├── Cloud → ai_generate_plan_cloud
               │         └── On-Premise → ai_generate_plan_onprem

@@ -194,11 +194,11 @@ In Port, open **Settings → Self-service → Actions → Import** (wording may 
 
 **Notes:**
 - **Workflows may be beta** — if import is disabled, say what to ask an admin.
-- The workflow has **14 nodes**.
+- The workflow has **15 nodes**.
 - **INPUT node** `human_gate_before_plan`: after service context loads, someone chooses **Yes — generate draft plan with AI** or **No — cancel run** before any AI step runs. That authorizes **running the AI to draft a plan**, not approving the final infrastructure change.
 - **AI nodes** use `tools: []` and **no `mcpServers`** so the workshop does not require GitHub or Notion MCP server entities in Port.
 - **Slack** nodes need secrets `SLACK_BOT_TOKEN` and `SLACK_PLATFORM_CHANNEL` to succeed; other steps may still run.
-- The fetch-service webhook uses **`https://api.port.io`** for the Port API and needs secret **`PORT_CLIENT_SECRET`** (Bearer token) in workflow secrets. Slack deep links still use `app.getport.io`; change if your tenant uses a different app host.
+- The fetch-service webhook uses **`https://api.port.io`** for the Port API. Add workflow secrets **`PORT_CLIENT_ID`** and **`PORT_CLIENT_SECRET`** (from your org API credentials). Node **`get_port_token`** exchanges them for a JWT; **`fetch_service_context`** uses that token — do **not** put the raw client secret in `Authorization`. Slack deep links still use `app.getport.io`; change if your tenant uses a different app host (EU API: `api.port.eu.io`).
 
 **After import:** Tell me where to open the **run timeline** and what **waiting for input** looks like for the INPUT step.
 
