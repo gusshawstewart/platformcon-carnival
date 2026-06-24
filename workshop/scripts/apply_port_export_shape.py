@@ -36,26 +36,16 @@ def main() -> None:
 
     nodes = data["nodes"]
 
-    # get_port_token + fetch_service_context → api.port.io + Port API auth
+    # fetch_service_context → api.getport.io (workflow-authenticated catalog fetch)
     for n in nodes:
-        if n["identifier"] == "get_port_token":
-            n["config"]["url"] = "https://api.port.io/v1/auth/access_token"
-            n["config"]["headers"] = {"Content-Type": "application/json"}
-            n["config"]["body"] = {
-                "clientId": "{{ .secrets.PORT_CLIENT_ID }}",
-                "clientSecret": "{{ .secrets.PORT_CLIENT_SECRET }}",
-            }
-            n["variables"] = {"accessToken": "{{ .result.response.accessToken }}"}
         if n["identifier"] == "fetch_service_context":
             n["config"]["url"] = (
-                "https://api.port.io/v1/blueprints/service/entities/{{ .outputs[\"trigger\"].service }}"
+                "https://api.getport.io/v1/blueprints/service/entities/{{ .outputs[\"trigger\"].service }}"
             )
-            n["config"]["headers"] = {
-                "Authorization": "Bearer {{ .outputs[\"get_port_token\"].accessToken }}"
-            }
+            n["config"].pop("headers", None)
             vars_ = n["variables"]
-            vars_["service_tier"] = "{{ .result.response.entity.properties.tier }}"
-            vars_["service_title"] = "{{ .result.response.entity.title }}"
+            vars_["service_tier"] = "{{ .result.response.data.entity.properties.tier }}"
+            vars_["service_title"] = "{{ .result.response.data.entity.title }}"
 
     # Move slack_hitl_gate_stopped to immediately after open_pr_with_coding_agent (Port export order)
     slack_hitl = next(n for n in nodes if n["identifier"] == "slack_hitl_gate_stopped")

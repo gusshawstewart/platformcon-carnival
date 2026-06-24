@@ -107,56 +107,26 @@
       "verbose": false
     },
     {
-      "identifier": "get_port_token",
-      "title": "Get Port API Token",
-      "icon": "Port",
-      "config": {
-        "type": "WEBHOOK",
-        "url": "https://api.port.io/v1/auth/access_token",
-        "agent": false,
-        "synchronized": true,
-        "method": "POST",
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "body": {
-          "clientId": "{{ .secrets.PORT_CLIENT_ID }}",
-          "clientSecret": "{{ .secrets.PORT_CLIENT_SECRET }}"
-        },
-        "onTimeout": "fail",
-        "onFailure": "terminate"
-      },
-      "variables": {
-        "accessToken": "{{ .result.response.accessToken }}"
-      },
-      "description": null,
-      "links": [],
-      "verbose": false
-    },
-    {
       "identifier": "fetch_service_context",
       "title": "Fetch Service Context",
       "icon": "Port",
+      "description": null,
       "config": {
         "type": "WEBHOOK",
-        "url": "https://api.port.io/v1/blueprints/service/entities/{{ .outputs[\"trigger\"].service }}",
+        "url": "https://api.getport.io/v1/blueprints/service/entities/{{ .outputs[\"trigger\"].service }}",
         "agent": false,
         "synchronized": true,
         "method": "GET",
-        "headers": {
-          "Authorization": "Bearer {{ .outputs[\"get_port_token\"].accessToken }}"
-        },
         "onTimeout": "fail",
         "onFailure": "terminate"
       },
       "variables": {
         "request_id": "{{ .outputs[\"trigger\"].environment | ascii_downcase }}-{{ .outputs[\"trigger\"].service }}-{{ (if .outputs[\"trigger\"].infrastructure_type == \"Cloud\" then .outputs[\"trigger\"].cloud_resource_type else .outputs[\"trigger\"].onprem_resource_type end) | gsub(\" \"; \"-\") | ascii_downcase }}",
         "resource_id": "{{ .outputs[\"trigger\"].environment | ascii_downcase }}-{{ .outputs[\"trigger\"].service }}-{{ (if .outputs[\"trigger\"].infrastructure_type == \"Cloud\" then .outputs[\"trigger\"].cloud_resource_type else .outputs[\"trigger\"].onprem_resource_type end) | gsub(\" \"; \"-\") | ascii_downcase }}-resource",
-        "service_tier": "{{ .result.response.entity.properties.tier }}",
+        "service_tier": "{{ .result.response.data.entity.properties.tier }}",
         "resource_type": "{{ if .outputs[\"trigger\"].infrastructure_type == \"Cloud\" then .outputs[\"trigger\"].cloud_resource_type else .outputs[\"trigger\"].onprem_resource_type end }}",
-        "service_title": "{{ .result.response.entity.title }}"
+        "service_title": "{{ .result.response.data.entity.title }}"
       },
-      "description": null,
       "links": [],
       "verbose": false
     },
@@ -641,11 +611,6 @@
   "connections": [
     {
       "sourceIdentifier": "trigger",
-      "targetIdentifier": "get_port_token",
-      "description": null
-    },
-    {
-      "sourceIdentifier": "get_port_token",
       "targetIdentifier": "fetch_service_context",
       "description": null
     },
